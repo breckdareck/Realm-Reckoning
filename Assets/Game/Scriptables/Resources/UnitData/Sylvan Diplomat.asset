@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff58013944c33438c7c0bed994c9d1, type: 3}
+  m_Name: Sylvan Diplomat
+  m_EditorClassIdentifier: 
+  unitName: Sylvan Diplomat
+  unitFaction: {fileID: 11400000, guid: 624cbc2cc0cad8246b9ede8ef864e43f, type: 2}
+  unitRank: {fileID: 11400000, guid: 535d33f3d2f264646b75590edaf4e8c5, type: 2}
+  unitTags:
+  - {fileID: 11400000, guid: 10d8a0ff6d2348f4797c5d1f95b0231e, type: 2}
+  - {fileID: 11400000, guid: 75970fc894a665640b17073d1f174e7b, type: 2}
+  - {fileID: 11400000, guid: e64f06224349a7148996a74e6742d69f, type: 2}
+  baseStats: {fileID: 11400000, guid: a0ceb4a3e6256f649b2f086a31ec7c2e, type: 2}
+  currentStats: {fileID: 0}
+  abilities:
+  - {fileID: 11400000, guid: 296963b37393bc141aad889c24b190eb, type: 2}

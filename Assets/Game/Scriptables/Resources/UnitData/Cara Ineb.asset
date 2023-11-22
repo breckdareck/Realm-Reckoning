@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff58013944c33438c7c0bed994c9d1, type: 3}
+  m_Name: Cara Ineb
+  m_EditorClassIdentifier: 
+  unitName: Cara Ineb
+  unitFaction: {fileID: 11400000, guid: 2244febf28faf9742b9f40d720f87bca, type: 2}
+  unitRank: {fileID: 11400000, guid: 535d33f3d2f264646b75590edaf4e8c5, type: 2}
+  unitTags:
+  - {fileID: 11400000, guid: 10d8a0ff6d2348f4797c5d1f95b0231e, type: 2}
+  - {fileID: 11400000, guid: f7ab11344ff013844ba1d84d6a85b09d, type: 2}
+  - {fileID: 11400000, guid: d7b5673d5db154141b75f133d635254e, type: 2}
+  - {fileID: 11400000, guid: 8684c8d9a5ac3124faa90f7be2c377e7, type: 2}
+  baseStats: {fileID: 11400000, guid: fb59f558cfb6b474f85d019336059d40, type: 2}
+  currentStats: {fileID: 0}
+  abilities:
+  - {fileID: 11400000, guid: 296963b37393bc141aad889c24b190eb, type: 2}

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff58013944c33438c7c0bed994c9d1, type: 3}
+  m_Name: Lyraen Thorncrest
+  m_EditorClassIdentifier: 
+  unitName: Lyraen Thorncrest
+  unitFaction: {fileID: 11400000, guid: 624cbc2cc0cad8246b9ede8ef864e43f, type: 2}
+  unitRank: {fileID: 11400000, guid: 96d98d887aaed294791143cbf0d24802, type: 2}
+  unitTags:
+  - {fileID: 11400000, guid: ea40929a6f68f3246b02c08a6400565c, type: 2}
+  - {fileID: 11400000, guid: 181b05d1d5c7e184cb2160431a4ba425, type: 2}
+  - {fileID: 11400000, guid: 7996b7e1f92d6ef49ba7b3afeae0531b, type: 2}
+  - {fileID: 11400000, guid: 26cc7a75a80ee0a40ac7b8e3f0b84413, type: 2}
+  baseStats: {fileID: 11400000, guid: 11c0ea1a5065cd145b50249de9b2233e, type: 2}
+  currentStats: {fileID: 0}
+  abilities:
+  - {fileID: 11400000, guid: 296963b37393bc141aad889c24b190eb, type: 2}

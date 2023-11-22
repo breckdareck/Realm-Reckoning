@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff58013944c33438c7c0bed994c9d1, type: 3}
+  m_Name: Krin Jaff
+  m_EditorClassIdentifier: 
+  unitName: Krin Jaff
+  unitFaction: {fileID: 11400000, guid: b2a2f962eaf3d594c9a46641489d86fa, type: 2}
+  unitRank: {fileID: 11400000, guid: df70826066590934c89feec70d21febc, type: 2}
+  unitTags:
+  - {fileID: 11400000, guid: 8cb620c2e15e3e842bce609ea620286f, type: 2}
+  - {fileID: 11400000, guid: 4cf9de203fbd72148b5753cb48a0598d, type: 2}
+  - {fileID: 11400000, guid: 734f774dc43b7b14488e9aa7686e4e88, type: 2}
+  - {fileID: 11400000, guid: 7a5680da3b0210d449e46d13fb373bc1, type: 2}
+  baseStats: {fileID: 11400000, guid: 02615e57dadc0fb46bd370ebb3cb589b, type: 2}
+  currentStats: {fileID: 0}
+  abilities:
+  - {fileID: 11400000, guid: 296963b37393bc141aad889c24b190eb, type: 2}
