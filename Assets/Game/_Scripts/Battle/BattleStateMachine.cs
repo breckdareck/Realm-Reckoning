@@ -24,7 +24,7 @@ namespace Game._Scripts.Battle
             _enemyUnits = enemyUnits;
             _allUnits = allUnits;
         }
-        
+
         private AbilityExecutor _abilityExecutor;
         private Ability _selectedAbility;
         private Unit _selectedUnit;
@@ -34,12 +34,28 @@ namespace Game._Scripts.Battle
 
         public List<Unit> PlayerUnits => _playerUnits;
         public List<Unit> EnemyUnits => _enemyUnits;
-        
-        
+
+
         private BattleState _currentState;
         public BattleState CurrentState => _currentState;
-        
-        
+
+        public void Update()
+        {
+            if (_currentState == BattleState.TurnCycle)
+            {
+                if (GetActiveUnit().IsTakingTurn) return;
+                foreach (var x in _allUnits)
+                {
+                    x.UpdateTurnProgress(Time.deltaTime * 10);
+                    if (!(x.TurnProgress >= 1000f)) continue;
+                    _currentUnitIndex = _allUnits.IndexOf(x);
+                    GetActiveUnit().StartTurn();
+                    SetState(GetNextUnitTurn());
+                    return;
+                }
+            }
+        }
+
         public void SetState(BattleState newState)
         {
             _currentState = newState;
@@ -51,9 +67,13 @@ namespace Game._Scripts.Battle
                 case BattleState.Start:
                     _abilityExecutor = new AbilityExecutor();
                     _targetedEnemyUnit = _enemyUnits[0];
-                    _targetedEnemyUnit.SetEnemyTargetAnim();
+                    _targetedEnemyUnit.UnitUI.SetEnemyTargetAnim();
                     EventManager.Instance.OnUnitSelectedChangedEvent += OnUnitSelected;
-                    SetState(GetNextUnitTurn());
+                    SetState(BattleState.TurnCycle);
+                    break;
+
+                case BattleState.TurnCycle:
+                    //SetState(GetNextUnitTurn());
                     break;
 
                 case BattleState.PlayerTurn:
@@ -74,40 +94,42 @@ namespace Game._Scripts.Battle
                     break;
             }
         }
-        
+
         private BattleState GetNextUnitTurn()
         {
             return _playerUnits.Contains(_allUnits[_currentUnitIndex])
                 ? BattleState.PlayerTurn
                 : BattleState.EnemyTurn;
         }
-        
+
         private void StartPlayerTurn()
         {
             Debug.Log("Player's turn");
-            
+
+
             EventManager.Instance.InvokeOnStepChanged("Select Ability");
             
-            for (int i = 0; i < GetActiveUnit().UnitsData.abilities.Length; i++)
+            for (var i = 0; i < 4; i++)
             {
-                UI_Battle.Instance.SetupAbilityButton(GetActiveUnit().UnitsData.abilities[i], i);
+                UI_Battle.Instance.SetupAbilityButton(
+                    i < GetActiveUnit().UnitsData.abilities.Length ? GetActiveUnit().UnitsData.abilities[i] : null, i);
             }
-            
-            GetActiveUnit().SetActiveUnitAnim();
-            
+
+            GetActiveUnit().UnitUI.SetActiveUnitAnim();
+
             EventManager.Instance.OnAbilitySelectionChangedEvent += OnAbilitySelected;
         }
 
         private async void StartEnemyTurn()
         {
             Debug.Log("Enemy's turn");
-            
+
             EventManager.Instance.InvokeOnStepChanged("Wait For Enemy Turn");
 
-            int abilityChosen = Random.Range(0, GetActiveUnit().UnitsData.abilities.Length);
+            var abilityChosen = Random.Range(0, GetActiveUnit().UnitsData.abilities.Length);
 
             var selectedAbility = GetActiveUnit().UnitsData.abilities[abilityChosen];
-            
+
             await _abilityExecutor.ExecuteAbility(selectedAbility, GetActiveUnit());
 
             SetState(BattleState.EndTurn);
@@ -117,10 +139,9 @@ namespace Game._Scripts.Battle
         {
             Debug.Log("End of turn");
 
-            // Increment the unit index for the next turn
-            _currentUnitIndex = (_currentUnitIndex + 1) % _allUnits.Count;
+            GetActiveUnit().EndTurn();
 
-            SetState(IsBattleOver() ? BattleState.End : GetNextUnitTurn());
+            SetState(IsBattleOver() ? BattleState.End : BattleState.TurnCycle);
         }
 
         private bool IsBattleOver()
@@ -128,13 +149,13 @@ namespace Game._Scripts.Battle
             // Implement logic to check if the battle conditions are met
             return false; // Replace with your actual logic
         }
-        
-        private Unit GetActiveUnit()
+
+        public Unit GetActiveUnit()
         {
             return _allUnits[_currentUnitIndex];
         }
-        
-        
+
+
         private async void OnAbilitySelected(Ability selectedAbility)
         {
             // Unsubscribe from the event to avoid multiple calls
@@ -145,7 +166,14 @@ namespace Game._Scripts.Battle
                 // Execute the selected ability on the selected unit
                 await _abilityExecutor.ExecuteAbility(selectedAbility, GetActiveUnit());
                 
-                GetActiveUnit().SetActiveUnitAnim();
+                // Sets all the Ability Buttons to dissapear
+                for (var i = 0; i < 4; i++)
+                {
+                    UI_Battle.Instance.SetupAbilityButton(null, i);
+                }
+
+                // Turns off the Active Anim for Players Units
+                GetActiveUnit().UnitUI.SetActiveUnitAnim();
 
                 // Notify the end of the player's turn
                 SetState(BattleState.EndTurn);
@@ -155,15 +183,15 @@ namespace Game._Scripts.Battle
                 EventManager.Instance.OnAbilitySelectionChangedEvent += OnAbilitySelected;
             }
         }
-        
+
         public void OnUnitSelected(Unit clickedUnit)
         {
             // Set the selected unit in the BattleSystem
             if (_enemyUnits.Contains(clickedUnit))
             {
-                _targetedEnemyUnit.SetEnemyTargetAnim();
+                _targetedEnemyUnit.UnitUI.SetEnemyTargetAnim();
                 _targetedEnemyUnit = clickedUnit;
-                _targetedEnemyUnit.SetEnemyTargetAnim();
+                _targetedEnemyUnit.UnitUI.SetEnemyTargetAnim();
             }
 
             if (_abilityExecutor.WaitingForTargetSelection)
@@ -172,7 +200,7 @@ namespace Game._Scripts.Battle
                 _abilityExecutor.SetWaitingForSelectionFalse();
             }
         }
-        
+
 
         public Unit GetSelectedUnit()
         {
@@ -188,6 +216,5 @@ namespace Game._Scripts.Battle
         {
             return _targetedEnemyUnit;
         }
-        
     }
 }

@@ -284,10 +284,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1393239199321105147, guid: 5a1c1dc24e486bc45b1948927a95ef90, type: 3}
-      propertyPath: m_BlockingMask.m_Bits
-      value: 4294967295
-      objectReference: {fileID: 0}
     - target: {fileID: 2105652722153264317, guid: 5a1c1dc24e486bc45b1948927a95ef90, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

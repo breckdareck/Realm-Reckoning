@@ -24,3 +24,4 @@ MonoBehaviour:
   currentStats: {fileID: 0}
   abilities:
   - {fileID: 11400000, guid: 296963b37393bc141aad889c24b190eb, type: 2}
+  - {fileID: 11400000, guid: 2545e820c78ff2a42aa291a85628e0de, type: 2}

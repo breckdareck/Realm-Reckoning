@@ -10,15 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37e27d2801f52054da6f8f57fde725b4, type: 3}
-  m_Name: Debuff_AttackDown_Manual
+  m_Name: Heal_BasicHeal
   m_EditorClassIdentifier: 
-  abilityName: DefenseDown
+  abilityName: BasicHeal
   actions:
-  - actionType: 2
-    targetType: 0
+  - actionType: 1
+    targetType: 1
     targetSelection: 0
     damageAmount: 0
+    healAmount: 10
+    barrierAmount: 5
     buffType: 0
     buffAmount: 0
-    debuffType: 1
-    debuffAmount: 10
+    debuffType: 0
+    debuffAmount: 0

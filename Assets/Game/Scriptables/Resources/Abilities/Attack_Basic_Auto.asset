@@ -17,7 +17,9 @@ MonoBehaviour:
   - actionType: 0
     targetType: 0
     targetSelection: 1
-    damageAmount: 10
+    damageAmount: 1
+    healAmount: 0
+    barrierAmount: 0
     buffType: 0
     buffAmount: 0
     debuffType: 0

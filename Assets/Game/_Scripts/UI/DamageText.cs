@@ -9,51 +9,49 @@ namespace Game._Scripts.UI
         public float spacingScale = .5f;
         public float fadeoutTime = .5f;
         public float fadeoutRate = .03f;
-    
+
         private Color fadeOut;
-        float t;
+        private float t;
 
         private void Awake()
         {
-            fadeOut= new Color(0, 0, 0, 0);
-            Destroy(gameObject, fadeoutTime+1f);
+            fadeOut = new Color(0, 0, 0, 0);
+            Destroy(gameObject, fadeoutTime + 1f);
         }
 
         private void Update()
         {
             t += Time.deltaTime;
-            transform.position += (Vector3.up * Time.deltaTime) / 2f;
-            if (t >= fadeoutTime)
-            {
-                dmgtxt.color = Color.Lerp(dmgtxt.color, fadeOut, fadeoutRate);
-            }
+            transform.position += Vector3.up * Time.deltaTime / 2f;
+            if (t >= fadeoutTime) dmgtxt.color = Color.Lerp(dmgtxt.color, fadeOut, fadeoutRate);
         }
 
-        public void SetDamageText(string damageAmount, bool isCrit)
+        public void SetDamageText(string amount, bool isHeal, bool isCrit)
         {
-            if (isCrit)
+            if (isHeal)
             {
                 var dmgtxtColorGradient = dmgtxt.colorGradient;
                 dmgtxtColorGradient.topLeft = Color.black;
-                dmgtxtColorGradient.bottomLeft =Color.red;
+                dmgtxtColorGradient.bottomLeft = Color.green;
                 dmgtxt.colorGradient = dmgtxtColorGradient;
             }
             
-            var sb = new System.Text.StringBuilder();
-            for (int i = 0; i < damageAmount.Length; i++)
+            if (isCrit && !isHeal)
             {
-                if (i%2!=0)
-                {
-                    sb.Append("<voffset=-1px>" + damageAmount[i] + "</voffset>");
-                }
-                else
-                {
-                    sb.Append(damageAmount[i]);
-                }
+                var dmgtxtColorGradient = dmgtxt.colorGradient;
+                dmgtxtColorGradient.topLeft = Color.black;
+                dmgtxtColorGradient.bottomLeft = Color.red;
+                dmgtxt.colorGradient = dmgtxtColorGradient;
             }
+
+            var sb = new System.Text.StringBuilder();
+            for (var i = 0; i < amount.Length; i++)
+                if (i % 2 != 0)
+                    sb.Append("<voffset=-1px>" + amount[i] + "</voffset>");
+                else
+                    sb.Append(amount[i]);
 
             dmgtxt.text = sb.ToString();
         }
     }
 }
-

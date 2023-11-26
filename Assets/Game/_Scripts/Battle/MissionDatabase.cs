@@ -13,6 +13,4 @@ namespace Game._Scripts.Battle
             return missions.Find(x => x.missionName == missionName);
         }
     }
-    
-    
 }

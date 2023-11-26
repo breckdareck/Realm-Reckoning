@@ -56,7 +56,6 @@ namespace Game._Scripts.Abilities
 
         private Task<Unit> GetTargetForAction(AbilityAction action)
         {
-            
             switch (action.targetSelection)
             {
                 case TargetSelection.Manual:
@@ -82,21 +81,19 @@ namespace Game._Scripts.Abilities
         private async Task WaitForTargetSelection(AbilityAction action)
         {
             _waitingForTargetSelection = true;
-            
+
             if (action.targetType == TargetType.Ally)
             {
                 EventManager.Instance.InvokeOnStepChanged("Select Ally Unit");
-                
-                
+
+
                 // TODO - _waitingForTargetSelection is being set to false when any unit is selected. need to make sure the right unit is selected before proceeding
                 NotFound:
-                while (_waitingForTargetSelection)
-                {
-                    await Task.Yield();
-                }
-                bool isTargetType = BattleSystem.Instance.BattleStateMachine.PlayerUnits.Contains(BattleSystem.Instance.BattleStateMachine
+                while (_waitingForTargetSelection) await Task.Yield();
+                var isTargetType = BattleSystem.Instance.BattleStateMachine.PlayerUnits.Contains(BattleSystem.Instance
+                    .BattleStateMachine
                     .GetSelectedUnit());
-                if(!isTargetType)
+                if (!isTargetType)
                 {
                     _waitingForTargetSelection = true;
                     goto NotFound;
@@ -105,13 +102,11 @@ namespace Game._Scripts.Abilities
             else
             {
                 EventManager.Instance.InvokeOnStepChanged("Select Enemy Unit");
-                
+
                 NotFound:
-                while (_waitingForTargetSelection)
-                {
-                    await Task.Yield();
-                }
-                bool isTargetType = BattleSystem.Instance.BattleStateMachine.EnemyUnits.Contains(BattleSystem.Instance.BattleStateMachine
+                while (_waitingForTargetSelection) await Task.Yield();
+                var isTargetType = BattleSystem.Instance.BattleStateMachine.EnemyUnits.Contains(BattleSystem.Instance
+                    .BattleStateMachine
                     .GetSelectedUnit());
                 if (!isTargetType)
                 {
@@ -119,7 +114,7 @@ namespace Game._Scripts.Abilities
                     goto NotFound;
                 }
             }
-            
+
 
             EventManager.Instance.InvokeOnStepChanged("");
 
@@ -143,7 +138,11 @@ namespace Game._Scripts.Abilities
             switch (action.actionType)
             {
                 case ActionType.Attack:
-                    return new AttackCommand(action.damageAmount);
+                    // TODO : Implement Pierce Barrier
+                    return new AttackCommand(action.damageAmount, false);
+                
+                case ActionType.Heal:
+                    return new HealCommand(action.healAmount, action.barrierAmount);
 
                 case ActionType.Buff:
                     return new BuffCommand(action.buffAmount, GetAffectedStats(action.buffType));
@@ -158,39 +157,39 @@ namespace Game._Scripts.Abilities
             }
         }
 
-        private Stat[] GetAffectedStats(BuffType buffType)
+        private GeneralStat[] GetAffectedStats(BuffType buffType)
         {
             // Map BuffType to the corresponding array of affected stats
             switch (buffType)
             {
                 case BuffType.IncreaseAttack:
-                    return new[] { Stat.PhysicalDamage, Stat.MagikalDamage };
+                    return new[] { GeneralStat.PhysicalOffense, GeneralStat.MagikOffense };
                 case BuffType.IncreaseDefense:
-                    return new[] { Stat.Armor, Stat.MagikArmor };
+                    return new[] { GeneralStat.Armor, GeneralStat.MagikArmor };
 
                 // Add more cases for other BuffTypes as needed
 
                 default:
                     Debug.LogWarning("Unsupported buff type");
-                    return Array.Empty<Stat>(); // or handle it in a way that makes sense for your system
+                    return Array.Empty<GeneralStat>(); // or handle it in a way that makes sense for your system
             }
         }
 
-        private Stat[] GetAffectedStats(DebuffType debuffType)
+        private GeneralStat[] GetAffectedStats(DebuffType debuffType)
         {
             // Map DebuffType to the corresponding array of affected stats
             switch (debuffType)
             {
                 case DebuffType.DecreaseAttack:
-                    return new[] { Stat.PhysicalDamage, Stat.MagikalDamage };
+                    return new[] { GeneralStat.PhysicalOffense, GeneralStat.MagikOffense };
                 case DebuffType.DecreaseDefense:
-                    return new[] { Stat.Armor, Stat.MagikArmor };
+                    return new[] { GeneralStat.Armor, GeneralStat.MagikArmor };
 
                 // Add more cases for other DebuffTypes as needed
 
                 default:
                     Debug.LogWarning("Unsupported debuff type");
-                    return Array.Empty<Stat>(); // or handle it in a way that makes sense for your system
+                    return Array.Empty<GeneralStat>(); // or handle it in a way that makes sense for your system
             }
         }
     }

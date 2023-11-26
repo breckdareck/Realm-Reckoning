@@ -14,8 +14,8 @@ namespace Game._Scripts.Battle
 {
     public enum BattleState
     {
-        Idle,
         Start,
+        TurnCycle,
         PlayerTurn,
         EnemyTurn,
         EndTurn,
@@ -31,24 +31,25 @@ namespace Game._Scripts.Battle
         private List<Unit> _allUnits;
 
         public BattleStateMachine BattleStateMachine => _battleStateMachine;
-        
+
         public static BattleSystem Instance { get; private set; }
 
         private void Awake()
         {
             if (Instance == null)
-            {
                 Instance = this;
-            }
             else
-            {
                 Destroy(gameObject);
-            }
         }
 
         private void Start()
         {
             InitializeBattle();
+        }
+
+        private void Update()
+        {
+            _battleStateMachine.Update();
         }
 
         private void InitializeBattle()
@@ -60,67 +61,69 @@ namespace Game._Scripts.Battle
             SortUnitsBySpeed();
 
             CreateStateMachine();
-            
+
             _battleStateMachine.SetState(BattleState.Start);
         }
-        
+
         private void CreateAllUnits()
         {
             PlayerUnits = new List<Unit>();
             PlayerManager.Instance.GetPlayerTeam().ForEach(x => PlayerUnits.Add(CreateUnit(x, false)));
             EnemyUnits = GetEnemyUnitsForMission("Mission_A1");
         }
-        
+
         private List<Unit> GetEnemyUnitsForMission(string missionName)
         {
-            MissionDatabase missionDatabase = Resources.Load<MissionDatabase>("MissionDatabase/MainMissionDatabase");
-            Mission mission = missionDatabase.GetMissionByName(missionName);
-            
+            var missionDatabase = Resources.Load<MissionDatabase>("MissionDatabase/MainMissionDatabase");
+            var mission = missionDatabase.GetMissionByName(missionName);
+
             var enemies = new List<Unit>();
 
-            foreach (UnitData unitData in mission.missionUnitDatas)
+            foreach (var unitData in mission.missionUnitDatas)
             {
                 var enemyUnit = CreateUnit(unitData, true);
                 enemies.Add(enemyUnit);
             }
-            
+
             return enemies;
         }
 
         private Unit CreateUnit(UnitData unitData, bool isAIUnit)
         {
-            Unit unit = Instantiate(unitBasePrefab);
+            var unit = Instantiate(unitBasePrefab);
             unit.Initialize(unitData, isAIUnit);
             unit.name = unitData.unitName;
             return unit;
         }
-        
+
         private void SetUnitToSpawnLocation()
         {
             var playerSpawns = GameObject.Find("PlayerSpawns");
             var enemySpawns = GameObject.Find("EnemySpawns");
 
-            for (int i = 0; i < PlayerUnits.Count; i++)
+            for (var i = 0; i < PlayerUnits.Count; i++)
             {
                 PlayerUnits[i].transform.SetParent(playerSpawns.transform.GetChild(i));
                 PlayerUnits[i].transform.localPosition = Vector3.zero;
             }
-            
-            for (int i = 0; i < EnemyUnits.Count; i++)
+
+            for (var i = 0; i < EnemyUnits.Count; i++)
             {
                 EnemyUnits[i].transform.SetParent(enemySpawns.transform.GetChild(i));
                 EnemyUnits[i].transform.localPosition = Vector3.zero;
             }
         }
-        
+
         private void SortUnitsBySpeed()
         {
             _allUnits = new List<Unit>(PlayerUnits);
             _allUnits.AddRange(EnemyUnits);
-            
-            _allUnits.Sort(((a, b) => b.UnitsData.currentStats.GetStatValue(Stat.Speed).CompareTo(a.UnitsData.currentStats.GetStatValue(Stat.Speed))));
+
+            _allUnits.Sort((a, b) =>
+                b.UnitsData.currentStats.GetStatValue(GeneralStat.Speed)
+                    .CompareTo(a.UnitsData.currentStats.GetStatValue(GeneralStat.Speed)));
         }
-        
+
         private void CreateStateMachine()
         {
             _battleStateMachine = new BattleStateMachine(PlayerUnits, EnemyUnits, _allUnits);

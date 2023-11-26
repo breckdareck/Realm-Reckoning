@@ -2,27 +2,49 @@ using System;
 
 namespace Game._Scripts
 {
+    
     [Serializable]
-    public enum Stat
+    public enum GeneralStat
     {
-        Undefined,
         Level,
-        StarRating,
         Experience,
-        Health,
-        HealthPerLevel,
-        PhysicalDamage,
-        MagikalDamage,
+        StarRating,
         Strength,
-        StrengthPerLevel,
         Agility,
-        AgilityPerLevel,
         Magik,
-        MagikPerLevel,
+        AdherenceToCommand,
+        Leadership,
+        Health,
         Speed,
+        Potency,
+        Resilience,
+        Bloodlust,
+        CriticalDamage,
+        DefenseNegation,
+        PhysicalOffense,
+        PhysicalCriticalChance,
+        ArmorPierce,
+        PhysicalAccuracy,
         Armor,
-        ArmorPerLevel,
+        PhysicalDodge,
+        PhysicalCriticalAvoidance,
+        MagikOffense,
+        MagikCriticalChance,
+        MagikArmorPierce,
+        MagikAccuracy,
         MagikArmor,
-        MagikArmorPerLevel
+        MagikDodge,
+        MagikCriticalAvoidance,
+    }
+    
+
+// Level-up bonuses
+    public enum LevelUpBonus
+    {
+        StrengthPerLevel,
+        AgilityPerLevel,
+        MagikPerLevel,
+        ArmorPerLevel,
+        MagikArmorPerLevel,
     }
 }

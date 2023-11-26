@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: AttackDown
   actions:
-  - actionType: 2
+  - actionType: 3
     targetType: 0
     targetSelection: 1
     damageAmount: 0
+    healAmount: 0
     buffType: 0
     buffAmount: 0
     debuffType: 0

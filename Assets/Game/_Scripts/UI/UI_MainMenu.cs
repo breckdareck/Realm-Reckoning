@@ -26,13 +26,9 @@ namespace Game._Scripts.UI
         private void Awake()
         {
             if (Instance == null)
-            {
                 Instance = this;
-            }
             else
-            {
                 Destroy(gameObject);
-            }
         }
 
         private void Start()
@@ -40,7 +36,7 @@ namespace Game._Scripts.UI
             use10Button.onClick.AddListener(delegate { EnergyManager.Instance.UpdateEnergyAmount(-10, true); });
             gain10Button.onClick.AddListener(delegate { EnergyManager.Instance.UpdateEnergyAmount(10, false); });
             gain10OvercapButton.onClick.AddListener(delegate { EnergyManager.Instance.UpdateEnergyAmount(10, true); });
-            
+
             // Initialize the UI with the current stamina value
             UpdateEnergyText();
         }
@@ -61,7 +57,7 @@ namespace Game._Scripts.UI
             lastUpdateTimeText.text = $"Last Update: {EnergyManager.Instance.LastEnergyUpdateTime.ToString()}";
             nextUpdateTimeText.text = $"Next Update: {EnergyManager.Instance.NextEnergyUpdateTime.ToString()}";
         }
-        
+
         private void UpdateEnergyText()
         {
             energyText.text = $"{EnergyManager.Instance.CurrentEnergy}/100";
@@ -76,12 +72,12 @@ namespace Game._Scripts.UI
         private IEnumerator LoadSceneAsync(string sceneName)
         {
             // Start loading the scene asynchronously
-            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
+            var asyncOperation = SceneManager.LoadSceneAsync(sceneName);
 
             // Wait until the scene is fully loaded
             while (!asyncOperation.isDone)
             {
-                float progress = Mathf.Clamp01(asyncOperation.progress / 0.9f); // 0.9 is the completion threshold
+                var progress = Mathf.Clamp01(asyncOperation.progress / 0.9f); // 0.9 is the completion threshold
                 Debug.Log($"Loading progress: {progress * 100}%");
 
                 // You can update a loading bar or display progress here
@@ -93,13 +89,7 @@ namespace Game._Scripts.UI
             Debug.Log("Scene loaded successfully");
 
             // Check if the loaded scene is the Battle Scene
-            if (sceneName == "BattleScene")
-            {
-                Debug.Log("BattleScene Loaded: Initializing Battle");
-            }
+            if (sceneName == "BattleScene") Debug.Log("BattleScene Loaded: Initializing Battle");
         }
-        
-        
-        
     }
 }

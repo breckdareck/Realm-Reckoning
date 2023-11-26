@@ -9,14 +9,14 @@ namespace Game._Scripts.Managers
     public sealed class EventManager : MonoBehaviour
     {
         public static EventManager Instance;
-        
+
         // Battle Event
         public event Action OnStateChangedEvent;
         public event Action<string> OnStepChangedEvent;
         public event Action<Ability> OnAbilitySelectionChangedEvent;
         public event Action<Unit> OnUnitSelectedChangedEvent;
-        
-        
+
+
         // Energy Events
         public event Action OnEnergyChangedEvent;
 
@@ -41,19 +41,19 @@ namespace Game._Scripts.Managers
             Debug.Log("Invoking OnStateChanged");
             OnStateChangedEvent?.Invoke();
         }
-        
+
         public void InvokeOnStepChanged(string text)
         {
             Debug.Log("Invoking OnStepChanged");
             OnStepChangedEvent?.Invoke(text);
         }
-        
+
         public void InvokeOnAbilitySelectionChanged(Ability ability)
         {
             Debug.Log("Invoking OnAbilitySelectionChanged");
             OnAbilitySelectionChangedEvent?.Invoke(ability);
         }
-        
+
         public void InvokeOnUnitSelectedChanged(Unit unit)
         {
             Debug.Log("Invoking OnUnitSelectedChanged()");
@@ -72,7 +72,5 @@ namespace Game._Scripts.Managers
         }
 
         #endregion
-    
-        
     }
 }
