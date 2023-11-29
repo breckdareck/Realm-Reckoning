@@ -35,7 +35,7 @@ namespace Game._Scripts.UI
                 dmgtxtColorGradient.bottomLeft = Color.green;
                 dmgtxt.colorGradient = dmgtxtColorGradient;
             }
-            
+
             if (isCrit && !isHeal)
             {
                 var dmgtxtColorGradient = dmgtxt.colorGradient;

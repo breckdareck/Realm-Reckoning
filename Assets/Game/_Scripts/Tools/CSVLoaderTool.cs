@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Game._Scripts;
-using Game._Scripts.Units;
+using Game._Scripts.Enums;
+using Game._Scripts.Scriptables;
 using UnityEditor;
 using UnityEngine;
 
 // ReSharper disable StringLiteralTypo
 
-namespace Tools
+namespace Game._Scripts.Tools
 {
 #if UNITY_EDITOR
 
@@ -26,12 +26,12 @@ namespace Tools
                 var values = lines[i].Trim().Split(',');
 
                 // Create new Scriptable Objects
-                var unitData = ScriptableObject.CreateInstance<UnitData>();
-                var unitStats = ScriptableObject.CreateInstance<Stats>();
+                var unitData = ScriptableObject.CreateInstance<UnitDataSO>();
+                var unitStats = ScriptableObject.CreateInstance<BaseStatsSO>();
                 ;
-                Faction faction;
-                UnitRanks rank;
-                var tags = new List<UnitTags>();
+                FactionSO factionSo;
+                UnitRankSO rankSo;
+                var tags = new List<UnitTagSO>();
 
                 // Populate the fields based on the headers and values
                 for (var j = 0; j < Mathf.Min(headers.Length, values.Length); j++)
@@ -46,16 +46,16 @@ namespace Tools
                             unitData.unitName = value;
                             break;
                         case "faction":
-                            faction = LoadOrCreateScriptableObject<Faction>(
+                            factionSo = LoadOrCreateScriptableObject<FactionSO>(
                                 $"Assets/Game/Scriptables/Resources/UnitFactions/{value}.asset");
-                            faction.factionName = value;
-                            unitData.unitFaction = faction;
+                            factionSo.factionName = value;
+                            unitData.unitFactionSo = factionSo;
                             break;
                         case "rank":
-                            rank = LoadOrCreateScriptableObject<UnitRanks>(
+                            rankSo = LoadOrCreateScriptableObject<UnitRankSO>(
                                 $"Assets/Game/Scriptables/Resources/UnitRanks/{value}.asset");
-                            rank.unitRank = value;
-                            unitData.unitRank = rank;
+                            rankSo.unitRank = value;
+                            unitData.unitRankSo = rankSo;
                             break;
                         case "baselevel":
                             CheckStatsForExistingKeyValue(unitStats, GeneralStat.Level, value);
@@ -97,7 +97,7 @@ namespace Tools
                             if (header.StartsWith("tag_"))
                             {
                                 if (value is null or "") continue;
-                                var tag = LoadOrCreateScriptableObject<UnitTags>(
+                                var tag = LoadOrCreateScriptableObject<UnitTagSO>(
                                     $"Assets/Game/Scriptables/Resources/UnitTags/{value}.asset");
                                 tag.unitTag = value;
                                 tags.Add(tag);
@@ -108,7 +108,7 @@ namespace Tools
                 }
 
                 // Save the Scriptable Objects
-                unitData.baseStats = unitStats;
+                unitData.baseStatsSo = unitStats;
                 unitData.unitTags = tags.ToArray();
                 AssetDatabase.CreateAsset(unitStats,
                     $"Assets/Game/Scriptables/Resources/UnitStats/{unitData.unitName}_Base_Stats.asset");
@@ -121,21 +121,24 @@ namespace Tools
             AssetDatabase.Refresh();
         }
 
-        private static void CheckStatsForExistingKeyValue(Stats unitStats, Enum stat, string value)
+        private static void CheckStatsForExistingKeyValue(BaseStatsSO unitBaseStatsSo, Enum stat, string value)
         {
             switch (stat)
             {
                 case GeneralStat generalStat:
-                    if(unitStats.generalStats.ContainsKey(generalStat))
-                        unitStats.generalStats[generalStat] = float.TryParse(value, out var result) ? result : 1;
+                    if (unitBaseStatsSo.generalStats.ContainsKey(generalStat))
+                        unitBaseStatsSo.generalStats[generalStat] = float.TryParse(value, out var result) ? result : 1;
                     else
-                        unitStats.generalStats.Add(generalStat, float.TryParse(value, out var result) ? result : 1);
+                        unitBaseStatsSo.generalStats.Add(generalStat,
+                            float.TryParse(value, out var result) ? result : 1);
                     break;
                 case LevelUpBonus levelUpBonus:
-                    if(unitStats.levelUpBonuses.ContainsKey(levelUpBonus))
-                        unitStats.levelUpBonuses[levelUpBonus] = float.TryParse(value, out var result) ? result : 1;
+                    if (unitBaseStatsSo.levelUpBonuses.ContainsKey(levelUpBonus))
+                        unitBaseStatsSo.levelUpBonuses[levelUpBonus] =
+                            float.TryParse(value, out var result) ? result : 1;
                     else
-                        unitStats.levelUpBonuses.Add(levelUpBonus, float.TryParse(value, out var result) ? result : 1);
+                        unitBaseStatsSo.levelUpBonuses.Add(levelUpBonus,
+                            float.TryParse(value, out var result) ? result : 1);
                     break;
             }
         }

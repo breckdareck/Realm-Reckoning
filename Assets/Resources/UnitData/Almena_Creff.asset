@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff58013944c33438c7c0bed994c9d1, type: 3}
+  m_Name: Almena_Creff
+  m_EditorClassIdentifier: 
+  unitName: Almena Creff
+  unitFaction: {fileID: 11400000, guid: 2244febf28faf9742b9f40d720f87bca, type: 2}
+  unitRank: {fileID: 11400000, guid: 96d98d887aaed294791143cbf0d24802, type: 2}
+  unitTags:
+  - {fileID: 11400000, guid: c1f400ec7771f654ebb14ec1d02dc65c, type: 2}
+  - {fileID: 11400000, guid: f7ab11344ff013844ba1d84d6a85b09d, type: 2}
+  - {fileID: 11400000, guid: 2902cd9aacb7ba74392bc43007648856, type: 2}
+  - {fileID: 11400000, guid: 7df4b4f8b0611224187bc888fd5f5d88, type: 2}
+  baseStats: {fileID: 11400000, guid: 46d5ed8ea11314b408796103fada7c17, type: 2}
+  persistentStats: {fileID: 11400000, guid: 25a63d9f5f83eb04fa2a5647353c5107, type: 2}
+  abilities:
+  - {fileID: 11400000, guid: 296963b37393bc141aad889c24b190eb, type: 2}
+  - {fileID: 11400000, guid: 2545e820c78ff2a42aa291a85628e0de, type: 2}
+  - {fileID: 11400000, guid: 1bf2a4644369a8b42b15890a84d80f36, type: 2}
+  - {fileID: 11400000, guid: 2fa12c5687ae8454594e774a923fc0ea, type: 2}

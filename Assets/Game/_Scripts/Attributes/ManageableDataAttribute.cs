@@ -1,5 +1,8 @@
 ﻿using System;
 
-public class ManageableDataAttribute : Attribute
+namespace Game._Scripts.Attributes
 {
+    public class ManageableDataAttribute : Attribute
+    {
+    }
 }

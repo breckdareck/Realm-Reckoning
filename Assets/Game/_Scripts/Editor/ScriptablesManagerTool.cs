@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
-using Game._Scripts.Units;
+using Game._Scripts.Attributes;
+using Game._Scripts.Scriptables;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -28,14 +29,14 @@ namespace Game._Scripts.Editor
             foreach (var type in typesToDisplay)
                 if (type.Name == "UnitData")
                 {
-                    var factions = Resources.FindObjectsOfTypeAll<Faction>();
-                    var unitData = Resources.FindObjectsOfTypeAll<UnitData>();
+                    var factions = Resources.FindObjectsOfTypeAll<FactionSO>();
+                    var unitData = Resources.FindObjectsOfTypeAll<UnitDataSO>();
                     foreach (var faction in factions)
                     {
                         tree.Add($"UnitData/{faction.factionName}", null);
 
                         foreach (var data in unitData)
-                            if (data.unitFaction.factionName == faction.factionName)
+                            if (data.unitFactionSo.factionName == faction.factionName)
                                 tree.AddAssetAtPath($"UnitData/{faction.factionName}/{data.unitName}",
                                     $"Assets/Game/Scriptables/Resources/UnitData/{data.unitName}.asset");
                     }

@@ -1,22 +1,25 @@
-using Tools;
+using Game._Scripts.Tools;
 using UnityEditor;
 using UnityEngine;
 
-public class CustomToolsMenu
+namespace Game._Scripts.Editor
 {
-    [MenuItem("Custom Tools/Load CSV Data")]
-    public static void LoadCsvData()
+    public class CustomToolsMenu
     {
-        var path = EditorUtility.OpenFilePanel("Load CSV Data", "", "csv");
+        [MenuItem("Custom Tools/Load CSV Data")]
+        public static void LoadCsvData()
+        {
+            var path = EditorUtility.OpenFilePanel("Load CSV Data", "", "csv");
 
-        if (path.Length != 0)
-        {
-            var csvData = System.IO.File.ReadAllText(path);
-            CsvLoaderTool.LoadCsv(csvData);
-        }
-        else
-        {
-            Debug.LogError("Invalid file path or no file selected.");
+            if (path.Length != 0)
+            {
+                var csvData = System.IO.File.ReadAllText(path);
+                CsvLoaderTool.LoadCsv(csvData);
+            }
+            else
+            {
+                Debug.LogError("Invalid file path or no file selected.");
+            }
         }
     }
 }

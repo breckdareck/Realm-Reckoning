@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Game._Scripts.Abilities;
+using Game._Scripts.Enums;
 using Game._Scripts.Managers;
+using Game._Scripts.Scriptables;
 using Game._Scripts.UI;
-using Game._Scripts.Units;
+using Game._Scripts.UI.Battle;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
@@ -26,7 +28,7 @@ namespace Game._Scripts.Battle
         }
 
         private AbilityExecutor _abilityExecutor;
-        private Ability _selectedAbility;
+        private AbilitySO _selectedAbilitySo;
         private Unit _selectedUnit;
         private Unit _targetedEnemyUnit;
         private Unit _lastTargetedUnit;
@@ -49,7 +51,6 @@ namespace Game._Scripts.Battle
                     x.UpdateTurnProgress(Time.deltaTime * 10);
                     if (!(x.TurnProgress >= 1000f)) continue;
                     _currentUnitIndex = _allUnits.IndexOf(x);
-                    GetActiveUnit().StartTurn();
                     SetState(GetNextUnitTurn());
                     return;
                 }
@@ -67,7 +68,7 @@ namespace Game._Scripts.Battle
                 case BattleState.Start:
                     _abilityExecutor = new AbilityExecutor();
                     _targetedEnemyUnit = _enemyUnits[0];
-                    _targetedEnemyUnit.UnitUI.SetEnemyTargetAnim();
+                    _targetedEnemyUnit.UIUnit.SetEnemyTargetAnim();
                     EventManager.Instance.OnUnitSelectedChangedEvent += OnUnitSelected;
                     SetState(BattleState.TurnCycle);
                     break;
@@ -108,14 +109,13 @@ namespace Game._Scripts.Battle
 
 
             EventManager.Instance.InvokeOnStepChanged("Select Ability");
-            
-            for (var i = 0; i < 4; i++)
-            {
-                UI_Battle.Instance.SetupAbilityButton(
-                    i < GetActiveUnit().UnitsData.abilities.Length ? GetActiveUnit().UnitsData.abilities[i] : null, i);
-            }
 
-            GetActiveUnit().UnitUI.SetActiveUnitAnim();
+            for (var i = 0; i < 4; i++)
+                UI_Battle.Instance.SetupAbilityButton(
+                    i < GetActiveUnit().UnitsDataSo.abilities.Length ? GetActiveUnit().UnitsDataSo.abilities[i] : null,
+                    i);
+
+            GetActiveUnit().UIUnit.SetActiveUnitAnim();
 
             EventManager.Instance.OnAbilitySelectionChangedEvent += OnAbilitySelected;
         }
@@ -126,9 +126,9 @@ namespace Game._Scripts.Battle
 
             EventManager.Instance.InvokeOnStepChanged("Wait For Enemy Turn");
 
-            var abilityChosen = Random.Range(0, GetActiveUnit().UnitsData.abilities.Length);
+            var abilityChosen = Random.Range(0, GetActiveUnit().UnitsDataSo.abilities.Length);
 
-            var selectedAbility = GetActiveUnit().UnitsData.abilities[abilityChosen];
+            var selectedAbility = GetActiveUnit().UnitsDataSo.abilities[abilityChosen];
 
             await _abilityExecutor.ExecuteAbility(selectedAbility, GetActiveUnit());
 
@@ -138,6 +138,11 @@ namespace Game._Scripts.Battle
         private void EndTurn()
         {
             Debug.Log("End of turn");
+
+            /*foreach (var unit in _allUnits)
+            {
+                unit.TickDownStatusEffects();
+            }*/
 
             GetActiveUnit().EndTurn();
 
@@ -156,24 +161,21 @@ namespace Game._Scripts.Battle
         }
 
 
-        private async void OnAbilitySelected(Ability selectedAbility)
+        private async void OnAbilitySelected(AbilitySO selectedAbilitySo)
         {
             // Unsubscribe from the event to avoid multiple calls
             EventManager.Instance.OnAbilitySelectionChangedEvent -= OnAbilitySelected;
 
-            if (_targetedEnemyUnit != null && selectedAbility != null)
+            if (_targetedEnemyUnit != null && selectedAbilitySo != null)
             {
                 // Execute the selected ability on the selected unit
-                await _abilityExecutor.ExecuteAbility(selectedAbility, GetActiveUnit());
-                
+                await _abilityExecutor.ExecuteAbility(selectedAbilitySo, GetActiveUnit());
+
                 // Sets all the Ability Buttons to dissapear
-                for (var i = 0; i < 4; i++)
-                {
-                    UI_Battle.Instance.SetupAbilityButton(null, i);
-                }
+                for (var i = 0; i < 4; i++) UI_Battle.Instance.SetupAbilityButton(null, i);
 
                 // Turns off the Active Anim for Players Units
-                GetActiveUnit().UnitUI.SetActiveUnitAnim();
+                GetActiveUnit().UIUnit.SetActiveUnitAnim();
 
                 // Notify the end of the player's turn
                 SetState(BattleState.EndTurn);
@@ -189,9 +191,9 @@ namespace Game._Scripts.Battle
             // Set the selected unit in the BattleSystem
             if (_enemyUnits.Contains(clickedUnit))
             {
-                _targetedEnemyUnit.UnitUI.SetEnemyTargetAnim();
+                _targetedEnemyUnit.UIUnit.SetEnemyTargetAnim();
                 _targetedEnemyUnit = clickedUnit;
-                _targetedEnemyUnit.UnitUI.SetEnemyTargetAnim();
+                _targetedEnemyUnit.UIUnit.SetEnemyTargetAnim();
             }
 
             if (_abilityExecutor.WaitingForTargetSelection)

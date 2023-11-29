@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff58013944c33438c7c0bed994c9d1, type: 3}
+  m_Name: Tallin Bree
+  m_EditorClassIdentifier: 
+  unitName: Tallin Bree
+  unitFactionSo: {fileID: 11400000, guid: b2a2f962eaf3d594c9a46641489d86fa, type: 2}
+  unitRankSo: {fileID: 11400000, guid: 96d98d887aaed294791143cbf0d24802, type: 2}
+  unitTags:
+  - {fileID: 11400000, guid: bcfe383e8d9ad0647a34affaa0b20673, type: 2}
+  - {fileID: 11400000, guid: 4cf9de203fbd72148b5753cb48a0598d, type: 2}
+  - {fileID: 11400000, guid: 8964985923c056d42a30d261982eebef, type: 2}
+  - {fileID: 11400000, guid: e64f06224349a7148996a74e6742d69f, type: 2}
+  baseStatsSo: {fileID: 11400000, guid: 1eb4b14b600c7634d9c9d08b469452c2, type: 2}
+  persistentDataSo: {fileID: 11400000, guid: aaf6c1c33b7f2654ea94d130603d2bfa, type: 2}
+  abilities:
+  - {fileID: 11400000, guid: 296963b37393bc141aad889c24b190eb, type: 2}

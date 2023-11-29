@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Game._Scripts.Battle;
+using Game._Scripts.Enums;
 using Game._Scripts.Interfaces;
 using Game._Scripts.Managers;
+using Game._Scripts.Scriptables;
 using UnityEngine;
-using Game._Scripts.Units;
+using Unity.VisualScripting;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+using Unit = Game._Scripts.Battle.Unit;
 
 namespace Game._Scripts.Abilities
 {
@@ -19,11 +23,11 @@ namespace Game._Scripts.Abilities
 
         public bool WaitingForTargetSelection => _waitingForTargetSelection;
 
-        public Task ExecuteAbility(Ability ability, Unit source)
+        public Task ExecuteAbility(AbilitySO abilitySo, Unit source)
         {
-            if (ability == null || source == null)
+            if (abilitySo == null || source == null)
                 return Task.CompletedTask;
-            _remainingActions = new List<AbilityAction>(ability.actions);
+            _remainingActions = new List<AbilityAction>(abilitySo.actions);
             _waitingForTargetSelection = false;
 
             return StartAction(_remainingActions[0], source);
@@ -86,8 +90,6 @@ namespace Game._Scripts.Abilities
             {
                 EventManager.Instance.InvokeOnStepChanged("Select Ally Unit");
 
-
-                // TODO - _waitingForTargetSelection is being set to false when any unit is selected. need to make sure the right unit is selected before proceeding
                 NotFound:
                 while (_waitingForTargetSelection) await Task.Yield();
                 var isTargetType = BattleSystem.Instance.BattleStateMachine.PlayerUnits.Contains(BattleSystem.Instance
@@ -139,57 +141,25 @@ namespace Game._Scripts.Abilities
             {
                 case ActionType.Attack:
                     // TODO : Implement Pierce Barrier
-                    return new AttackCommand(action.damageAmount, false);
-                
+                    return new AttackCommand(action.damagePercent, false);
+
                 case ActionType.Heal:
                     return new HealCommand(action.healAmount, action.barrierAmount);
 
-                case ActionType.Buff:
-                    return new BuffCommand(action.buffAmount, GetAffectedStats(action.buffType));
+                case ActionType.StatusEffect:
+                    var newStatusEffects = new List<StatusEffectSO>();
+                    for (var i = 0; i < action.statusEffect.Count; i++)
+                    {
+                        var effect = Object.Instantiate(action.statusEffect[i]);
+                        newStatusEffects.Add(effect);
+                    }
 
-                case ActionType.Debuff:
-                    return new DebuffCommand(action.debuffAmount, GetAffectedStats(action.debuffType));
+                    return new StatusEffectCommand(newStatusEffects);
 
 
                 default:
                     Debug.LogWarning("Unsupported action type");
                     return null;
-            }
-        }
-
-        private GeneralStat[] GetAffectedStats(BuffType buffType)
-        {
-            // Map BuffType to the corresponding array of affected stats
-            switch (buffType)
-            {
-                case BuffType.IncreaseAttack:
-                    return new[] { GeneralStat.PhysicalOffense, GeneralStat.MagikOffense };
-                case BuffType.IncreaseDefense:
-                    return new[] { GeneralStat.Armor, GeneralStat.MagikArmor };
-
-                // Add more cases for other BuffTypes as needed
-
-                default:
-                    Debug.LogWarning("Unsupported buff type");
-                    return Array.Empty<GeneralStat>(); // or handle it in a way that makes sense for your system
-            }
-        }
-
-        private GeneralStat[] GetAffectedStats(DebuffType debuffType)
-        {
-            // Map DebuffType to the corresponding array of affected stats
-            switch (debuffType)
-            {
-                case DebuffType.DecreaseAttack:
-                    return new[] { GeneralStat.PhysicalOffense, GeneralStat.MagikOffense };
-                case DebuffType.DecreaseDefense:
-                    return new[] { GeneralStat.Armor, GeneralStat.MagikArmor };
-
-                // Add more cases for other DebuffTypes as needed
-
-                default:
-                    Debug.LogWarning("Unsupported debuff type");
-                    return Array.Empty<GeneralStat>(); // or handle it in a way that makes sense for your system
             }
         }
     }

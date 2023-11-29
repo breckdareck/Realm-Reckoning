@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Game._Scripts.Abilities;
+using Game._Scripts.Enums;
 using Game._Scripts.Managers;
+using Game._Scripts.Scriptables;
 using Game._Scripts.UI;
-using Game._Scripts.Units;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,16 +13,6 @@ using UnityEngine.Serialization;
 
 namespace Game._Scripts.Battle
 {
-    public enum BattleState
-    {
-        Start,
-        TurnCycle,
-        PlayerTurn,
-        EnemyTurn,
-        EndTurn,
-        End
-    }
-
     public class BattleSystem : MonoBehaviour
     {
         [SerializeField] private Unit unitBasePrefab;
@@ -74,7 +65,7 @@ namespace Game._Scripts.Battle
 
         private List<Unit> GetEnemyUnitsForMission(string missionName)
         {
-            var missionDatabase = Resources.Load<MissionDatabase>("MissionDatabase/MainMissionDatabase");
+            var missionDatabase = Resources.Load<MissionDatabaseSO>("MissionDatabase/MainMissionDatabase");
             var mission = missionDatabase.GetMissionByName(missionName);
 
             var enemies = new List<Unit>();
@@ -88,11 +79,11 @@ namespace Game._Scripts.Battle
             return enemies;
         }
 
-        private Unit CreateUnit(UnitData unitData, bool isAIUnit)
+        private Unit CreateUnit(UnitDataSO unitDataSo, bool isAIUnit)
         {
             var unit = Instantiate(unitBasePrefab);
-            unit.Initialize(unitData, isAIUnit);
-            unit.name = unitData.unitName;
+            unit.Initialize(unitDataSo, isAIUnit);
+            unit.name = unitDataSo.unitName;
             return unit;
         }
 
@@ -120,8 +111,8 @@ namespace Game._Scripts.Battle
             _allUnits.AddRange(EnemyUnits);
 
             _allUnits.Sort((a, b) =>
-                b.UnitsData.currentStats.GetStatValue(GeneralStat.Speed)
-                    .CompareTo(a.UnitsData.currentStats.GetStatValue(GeneralStat.Speed)));
+                b.UnitsDataSo.persistentDataSo.stats[GeneralStat.Speed]
+                    .CompareTo(a.UnitsDataSo.persistentDataSo.stats[GeneralStat.Speed]));
         }
 
         private void CreateStateMachine()

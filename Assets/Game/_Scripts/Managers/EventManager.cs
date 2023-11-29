@@ -1,6 +1,7 @@
 using System;
 using Game._Scripts.Abilities;
-using Game._Scripts.Units;
+using Game._Scripts.Battle;
+using Game._Scripts.Scriptables;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
@@ -13,7 +14,7 @@ namespace Game._Scripts.Managers
         // Battle Event
         public event Action OnStateChangedEvent;
         public event Action<string> OnStepChangedEvent;
-        public event Action<Ability> OnAbilitySelectionChangedEvent;
+        public event Action<AbilitySO> OnAbilitySelectionChangedEvent;
         public event Action<Unit> OnUnitSelectedChangedEvent;
 
 
@@ -38,25 +39,25 @@ namespace Game._Scripts.Managers
 
         public void InvokeOnStateChanged()
         {
-            Debug.Log("Invoking OnStateChanged");
+            //Debug.Log("Invoking OnStateChanged");
             OnStateChangedEvent?.Invoke();
         }
 
         public void InvokeOnStepChanged(string text)
         {
-            Debug.Log("Invoking OnStepChanged");
+            //Debug.Log("Invoking OnStepChanged");
             OnStepChangedEvent?.Invoke(text);
         }
 
-        public void InvokeOnAbilitySelectionChanged(Ability ability)
+        public void InvokeOnAbilitySelectionChanged(AbilitySO abilitySo)
         {
-            Debug.Log("Invoking OnAbilitySelectionChanged");
-            OnAbilitySelectionChangedEvent?.Invoke(ability);
+            //Debug.Log("Invoking OnAbilitySelectionChanged");
+            OnAbilitySelectionChangedEvent?.Invoke(abilitySo);
         }
 
         public void InvokeOnUnitSelectedChanged(Unit unit)
         {
-            Debug.Log("Invoking OnUnitSelectedChanged()");
+            //Debug.Log("Invoking OnUnitSelectedChanged()");
             OnUnitSelectedChangedEvent?.Invoke(unit);
         }
 
@@ -67,7 +68,7 @@ namespace Game._Scripts.Managers
 
         public void InvokeOnEnergyChanged()
         {
-            Debug.Log("Invoking OnEnergyChanged");
+            //Debug.Log("Invoking OnEnergyChanged");
             OnEnergyChangedEvent?.Invoke();
         }
 

@@ -44,7 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e84778a137ec4a94ea4d0cdc633fd7de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerUnlockedUnits: []
+  playerUnlockedUnits:
+  - {fileID: 11400000, guid: 1618334785e45fd48926603e28bd0e41, type: 2}
+  - {fileID: 11400000, guid: e148f83d38f8e464db399c321b9a1a01, type: 2}
+  - {fileID: 11400000, guid: d611ecb82b9eb9343a36402d61e309ac, type: 2}
+  - {fileID: 11400000, guid: f257e0a558f143d40ab6ebf4ff96b9da, type: 2}
+  - {fileID: 11400000, guid: ee1b0e39ab147984e9fe042e6a87cf46, type: 2}
   playerTeam:
   - {fileID: 11400000, guid: 1618334785e45fd48926603e28bd0e41, type: 2}
   - {fileID: 11400000, guid: e148f83d38f8e464db399c321b9a1a01, type: 2}

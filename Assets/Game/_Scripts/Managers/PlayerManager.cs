@@ -1,15 +1,16 @@
 using System.Collections.Generic;
-using Game._Scripts.Units;
+using System.Threading.Tasks;
+using Game._Scripts.Battle;
+using Game._Scripts.Scriptables;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Unit = Game._Scripts.Units.Unit;
 
 namespace Game._Scripts.Managers
 {
     public class PlayerManager : MonoBehaviour
     {
-        [SerializeField] private List<UnitData> playerUnlockedUnits;
-        [SerializeField] private List<UnitData> playerTeam;
+        [SerializeField] private List<UnitDataSO> playerUnlockedUnits;
+        [SerializeField] private List<UnitDataSO> playerTeam;
         [SerializeField] private List<Unit> playerUnits;
         public static PlayerManager Instance { get; private set; }
 
@@ -28,7 +29,20 @@ namespace Game._Scripts.Managers
             playerUnits = new List<Unit>();
         }
 
-        public List<UnitData> GetPlayerTeam()
+        private async void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.S)) CloudSave.SaveUnits(playerUnlockedUnits);
+
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                var data = await CloudSave.LoadUnit<UnitDataSO.UnitSaveData>($"{playerUnlockedUnits[0].name}");
+
+                Debug.Log(
+                    $"Unit:{playerUnlockedUnits[0].name} Lvl:{data.unitLevel} Exp:{data.experience} SR:{data.starRating}");
+            }
+        }
+
+        public List<UnitDataSO> GetPlayerTeam()
         {
             return playerTeam;
         }
