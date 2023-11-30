@@ -14,8 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   missionName: Mission_A1
   missionUnitDatas:
-  - {fileID: 11400000, guid: 8dcbb4815967c6641a89935d33c889c9, type: 2}
-  - {fileID: 11400000, guid: 6fe9e3f38492b214983d8a8f9fe7f8db, type: 2}
-  - {fileID: 11400000, guid: 497d9629972336040bad0f1b6b481fc9, type: 2}
-  - {fileID: 11400000, guid: 452c737d83fe80b439a66679ec6ccf19, type: 2}
+  - {fileID: 11400000, guid: e0337d2ca28d34d4195998dfbeee807f, type: 2}
   - {fileID: 11400000, guid: 52120d6fcef3fa948b890dfb13c5ddad, type: 2}

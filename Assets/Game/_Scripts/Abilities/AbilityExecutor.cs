@@ -35,38 +35,58 @@ namespace Game._Scripts.Abilities
 
         private async Task StartAction(AbilityAction action, Unit source)
         {
-            Unit target;
-            if (source.IsAIUnit)
+            while (true)
             {
-                await Task.Delay(2000);
-                var playerUnitIndex = Random.Range(0, BattleSystem.Instance.BattleStateMachine.PlayerUnits.Count);
-                target = BattleSystem.Instance.BattleStateMachine.PlayerUnits[playerUnitIndex];
-            }
-            else
-            {
-                target = await GetTargetForAction(action);
-            }
+                List<Unit> targets = new ();
+                if (source.IsAIUnit)
+                {
+                    await Task.Delay(2000);
+                    var playerUnitIndex = Random.Range(0, BattleSystem.Instance.BattleStateMachine.PlayerUnits.Count);
+                    targets.Add(BattleSystem.Instance.BattleStateMachine.PlayerUnits[playerUnitIndex]);
+                }
+                else
+                {
+                    targets = await GetTargetForAction(action, source);
+                }
 
-            if (target != null)
-            {
-                var command = CreateCommand(action);
-                command.Execute(source, target);
+                if (targets != null)
+                {
+                    foreach (var target in targets)
+                    {
+                        var command = CommandFactory.CreateCommand(action);
+                        command.Execute(source, target);
+                    }
+                    
+                    _remainingActions.Remove(action);
 
-                _remainingActions.Remove(action);
+                    if (_remainingActions.Count > 0)
+                    {
+                        action = _remainingActions[0];
+                        continue;
+                    }
+                }
 
-                if (_remainingActions.Count > 0) await StartAction(_remainingActions[0], source);
+                break;
             }
         }
 
-        private Task<Unit> GetTargetForAction(AbilityAction action)
+        private async Task<List<Unit>> GetTargetForAction(AbilityAction action, Unit source)
         {
             switch (action.targetSelection)
             {
                 case TargetSelection.Manual:
-                    return GetManuallySelectedTarget(action);
+                    if (action.targetType == TargetType.Self)
+                        return new List<Unit>() { source };
+                    else
+                        return new List<Unit>() { await TargetSelector.GetManuallySelectedTarget(action, this) };
 
                 case TargetSelection.Auto:
-                    return GetAutomaticallySelectedTarget();
+                    if (action.targetType == TargetType.AllEnemies)
+                        return TargetSelector.GetAllEnemyUnits();
+                    else if (action.targetType == TargetType.AllAllies)
+                        return TargetSelector.GetAllAllyUnits();
+                    else
+                        return new List<Unit>() { TargetSelector.GetAutomaticallySelectedTarget() };
 
                 default:
                     Debug.LogWarning("Unsupported target selection type");
@@ -74,93 +94,17 @@ namespace Game._Scripts.Abilities
             }
         }
 
-        private async Task<Unit> GetManuallySelectedTarget(AbilityAction action)
-        {
-            await WaitForTargetSelection(action);
-            var target = BattleSystem.Instance.BattleStateMachine.GetSelectedUnit();
-            BattleSystem.Instance.BattleStateMachine.ResetSelectedUnit();
-            return target;
-        }
-
-        private async Task WaitForTargetSelection(AbilityAction action)
-        {
-            _waitingForTargetSelection = true;
-
-            if (action.targetType == TargetType.Ally)
-            {
-                EventManager.Instance.InvokeOnStepChanged("Select Ally Unit");
-
-                NotFound:
-                while (_waitingForTargetSelection) await Task.Yield();
-                var isTargetType = BattleSystem.Instance.BattleStateMachine.PlayerUnits.Contains(BattleSystem.Instance
-                    .BattleStateMachine
-                    .GetSelectedUnit());
-                if (!isTargetType)
-                {
-                    _waitingForTargetSelection = true;
-                    goto NotFound;
-                }
-            }
-            else
-            {
-                EventManager.Instance.InvokeOnStepChanged("Select Enemy Unit");
-
-                NotFound:
-                while (_waitingForTargetSelection) await Task.Yield();
-                var isTargetType = BattleSystem.Instance.BattleStateMachine.EnemyUnits.Contains(BattleSystem.Instance
-                    .BattleStateMachine
-                    .GetSelectedUnit());
-                if (!isTargetType)
-                {
-                    _waitingForTargetSelection = true;
-                    goto NotFound;
-                }
-            }
-
-
-            EventManager.Instance.InvokeOnStepChanged("");
-
-            await Task.CompletedTask;
-        }
-
         public void SetWaitingForSelectionFalse()
         {
             _waitingForTargetSelection = false;
             Debug.Log("Set Waiting For Target Selection False");
         }
-
-        private Task<Unit> GetAutomaticallySelectedTarget()
+        
+        public void SetWaitingForSelectionTrue()
         {
-            var target = BattleSystem.Instance.BattleStateMachine.GetTargetUnit();
-            return Task.FromResult(target);
+            _waitingForTargetSelection = true;
+            Debug.Log("Set Waiting For Target Selection True");
         }
-
-        private ICommand CreateCommand(AbilityAction action)
-        {
-            switch (action.actionType)
-            {
-                case ActionType.Attack:
-                    // TODO : Implement Pierce Barrier
-                    return new AttackCommand(action.damagePercent, false);
-
-                case ActionType.Heal:
-                    return new HealCommand(action.healAmount, action.barrierAmount);
-
-                case ActionType.StatusEffect:
-                    var newStatusEffects = new List<StatusEffectSO>();
-                    for (var i = 0; i < action.statusEffect.Count; i++)
-                    {
-                        var effect = Object.Instantiate(action.statusEffect[i]);
-                        newStatusEffects.Add(effect);
-                    }
-
-                    return new StatusEffectCommand(newStatusEffects);
-
-
-                default:
-                    Debug.LogWarning("Unsupported action type");
-                    return null;
-            }
-        }
+        
     }
 }

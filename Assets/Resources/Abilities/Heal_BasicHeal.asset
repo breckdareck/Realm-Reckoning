@@ -17,7 +17,8 @@ MonoBehaviour:
   - actionType: 1
     targetType: 1
     targetSelection: 0
+    damageType: 0
     damagePercent: 0
-    healAmount: 80
-    barrierAmount: 20
+    healAmount: 50
+    barrierAmount: 30
     statusEffect: []

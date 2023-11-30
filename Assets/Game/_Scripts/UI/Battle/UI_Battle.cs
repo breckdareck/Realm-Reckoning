@@ -67,11 +67,11 @@ namespace Game._Scripts.UI.Battle
         {
             var unit = BattleSystem.Instance.BattleStateMachine.GetActiveUnit();
             debugUnitStatsText.text =
-                $"{BattleSystem.Instance.BattleStateMachine.GetActiveUnit().name} Base Stats + Bonus Battle Stats \n";
-            unit.UnitsDataSo.persistentDataSo.stats
+                $"{BattleSystem.Instance.BattleStateMachine.GetActiveUnit().name} Persistent Stats + Bonus Battle Stats = Current \n";
+            unit.UnitsDataSo.currentUnitStats
                 .ForEach(x =>
                     debugUnitStatsText.text +=
-                        $"{x.Key} : {x.Value} + {(unit.BattleBonusStats.TryGetValue(x.Key, out var stat) ? stat : 0)} \n");
+                        $"{x.Key} : {x.Value} + {(unit.BattleBonusStats.TryGetValue(x.Key, out var stat) ? stat : 0)} = {(unit.CurrentBattleStats.TryGetValue(x.Key, out var value) ? value : 0)} \n");
         }
 
         public void SetupAbilityButton(AbilitySO abilitySo, int buttonIndex)

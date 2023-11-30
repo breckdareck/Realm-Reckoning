@@ -11,7 +11,6 @@ namespace Game._Scripts.Managers
     {
         [SerializeField] private List<UnitDataSO> playerUnlockedUnits;
         [SerializeField] private List<UnitDataSO> playerTeam;
-        [SerializeField] private List<Unit> playerUnits;
         public static PlayerManager Instance { get; private set; }
 
         private void Awake()
@@ -25,8 +24,6 @@ namespace Game._Scripts.Managers
             {
                 Destroy(gameObject);
             }
-
-            playerUnits = new List<Unit>();
         }
 
         private async void Update()
@@ -45,6 +42,11 @@ namespace Game._Scripts.Managers
         public List<UnitDataSO> GetPlayerTeam()
         {
             return playerTeam;
+        }
+
+        public List<UnitDataSO> GetPlayerUnlockedUnits()
+        {
+            return playerUnlockedUnits;
         }
     }
 }

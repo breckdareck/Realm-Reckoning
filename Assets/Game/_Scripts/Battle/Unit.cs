@@ -11,42 +11,39 @@ namespace Game._Scripts.Battle
     [Serializable]
     public class Unit : MonoBehaviour
     {
+        private const int MaxBarrierPercent = 10;
+
+        
         [field: SerializeField] public UI_Unit UIUnit { get; private set; }
         [ShowInInspector] public UnitDataSO UnitsDataSo { get; private set; }
 
         // Public Battle Variables
-        [ShowInInspector] public float TurnProgress { get; private set; }
-        [ShowInInspector] public bool IsTakingTurn { get; private set; }
-        [ShowInInspector] public bool IsAIUnit { get; private set; }
-        [ShowInInspector] public int CurrentHealth { get; private set; }
-        [ShowInInspector] public int MaxHealth => (int)CurrentBattleStats[GeneralStat.Health];
-        [ShowInInspector] public int CurrentBarrier { get; private set; }
-        [ShowInInspector] public int MaxBarrier { get; private set; }
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public float TurnProgress { get; private set; }
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public bool IsTakingTurn { get; private set; }
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public bool IsAIUnit { get; private set; }
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public bool IsDead => CurrentHealth <= 0;
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public int CurrentHealth { get; private set; }
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public int MaxHealth => (int)CurrentBattleStats[GeneralStat.Health];
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public int CurrentBarrier { get; private set; }
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public int MaxBarrier { get; private set; }
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public Dictionary<GeneralStat, float> CurrentBattleStats { get; private set; }
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public Dictionary<GeneralStat, float> BattleBonusStats { get; private set; }
+        [ShowInInspector, ReadOnly, FoldoutGroup("Battle Vars")] public List<StatusEffectSO> StatusEffects { get; private set; } = new();
 
-        // This is a way of Tracking the Units Stats without messing with the Core UnitData Stats.
-        [ShowInInspector] public Dictionary<GeneralStat, float> CurrentBattleStats { get; private set; }
-
-        // This allows StatusEffects to modify other Stats during the Battle.
-        [ShowInInspector] public Dictionary<GeneralStat, float> BattleBonusStats { get; private set; }
-
-        [ShowInInspector] public List<StatusEffectSO> StatusEffects { get; private set; } = new();
-
-        private readonly int _maxBarrierPercent = 10;
 
         private void Awake()
         {
             if (UIUnit == null)
                 UIUnit = GetComponent<UI_Unit>();
         }
-
-
+        
         public void Initialize(UnitDataSO dataSo, bool isAIUnit)
         {
             IsAIUnit = isAIUnit;
             UnitsDataSo = dataSo;
-            SetupCurrentUnitBattleStats();
-            //MaxHealth = (int)data.persistentStats[GeneralStat.Health];
-            MaxBarrier = MaxHealth * _maxBarrierPercent;
+            CurrentBattleStats = new Dictionary<GeneralStat, float>(UnitsDataSo.currentUnitStats);
+            //MaxHealth = (int)CurrentBattleStats[GeneralStat.Health];
+            MaxBarrier = MaxHealth * MaxBarrierPercent;
             CurrentHealth = MaxHealth;
             BattleBonusStats = new Dictionary<GeneralStat, float>();
             var unit = this;
@@ -57,7 +54,7 @@ namespace Game._Scripts.Battle
         {
             if (IsTakingTurn) return;
 
-            TurnProgress += UnitsDataSo.baseStatsSo.GetStatValue(GeneralStat.Speed) * deltaTime;
+            TurnProgress += UnitsDataSo.baseUnitStats[GeneralStat.Speed] * deltaTime;
 
             UIUnit.UpdateTurnSliderValue(TurnProgress);
 
@@ -78,17 +75,17 @@ namespace Game._Scripts.Battle
             TickDownStatusEffects();
         }
 
-        private void SetupCurrentUnitBattleStats()
+        public void ApplyDamage(int damageAmount, bool isAttackDodged)
         {
-            //UnitsData.SetupPersistentStats();
-            CurrentBattleStats = new Dictionary<GeneralStat, float>(UnitsDataSo.persistentDataSo.stats);
-        }
-
-        public void ApplyDamage(int damageAmount)
-        {
-            if (damageAmount == 0)
+            if (isAttackDodged)
             {
                 UIUnit.CreateDamageText("Dodged");
+                return;
+            }
+
+            if (damageAmount == 0)
+            {
+                UIUnit.CreateDamageText("Damage Negated");
                 return;
             }
 
@@ -117,7 +114,7 @@ namespace Game._Scripts.Battle
                 }
             }
 
-            if (damageRemaining > 0) CurrentHealth -= Mathf.Clamp(damageRemaining, 0, MaxHealth);
+            if (damageRemaining > 0) CurrentHealth = Mathf.Clamp(CurrentHealth - damageRemaining, 0, MaxHealth);
 
             var combinedDamage = damageRemaining + oldBarrierAmount;
 
@@ -125,6 +122,9 @@ namespace Game._Scripts.Battle
             UIUnit.UpdateHealthUI();
             UIUnit.UpdateBarrierUI();
             Debug.Log($"{name} - Damage Taken: {combinedDamage}");
+            if (!IsDead) return;
+            Debug.Log($"{name} - Is Dead");
+            gameObject.SetActive(false);
         }
 
         public void ApplyHeal(int healAmount, int barrierAmount)
@@ -140,7 +140,7 @@ namespace Game._Scripts.Battle
         public void ApplyStatusEffect(StatusEffectSO statusEffectSo)
         {
             // Check For Stat (Buff Immunity)
-            if (StatusEffects.Exists(x => x.StatusEffectName == "Buff Immunity")) return;
+            if (StatusEffects.Exists(x => x.StatusEffectName == "Buff Immunity") && statusEffectSo.StatusEffectType == StatusEffectType.Buff) return;
 
             // Check For Stacking, Max Stacks
             if (statusEffectSo.CanStack &&
@@ -182,12 +182,11 @@ namespace Game._Scripts.Battle
             foreach (var effect in StatusEffects)
             foreach (var data in effect.StatusEffectDatas)
                 if (effect.StatusEffectCalculationType == StatusEffectCalculationType.Additive)
-                    BattleBonusStats[data.StatEffected] =
-                        UnitsDataSo.persistentDataSo.stats[data.StatEffected] + (float)data.EffectAmountPercent / 100 *
-                        effect.StackCount;
+                    BattleBonusStats[data.StatEffected] = 
+                        (float)data.EffectAmountPercent / 100 * effect.StackCount;
                 else
                     BattleBonusStats[data.StatEffected] =
-                        UnitsDataSo.persistentDataSo.stats[data.StatEffected] * ((float)data.EffectAmountPercent /
+                        UnitsDataSo.currentUnitStats[data.StatEffected] * ((float)data.EffectAmountPercent /
                             100 *
                             effect.StackCount);
         }

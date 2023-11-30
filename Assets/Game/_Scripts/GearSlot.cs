@@ -12,5 +12,10 @@ namespace Game._Scripts
         [field: SerializeField] public GearSO Gear { get; private set; }
         [field: SerializeField] public GearType GearType { get; private set; }
         [field: SerializeField] public bool IsEquipped { get; private set; }
+
+        public void SetGearType(GearType type)
+        {
+            GearType = type;
+        }
     }
 }

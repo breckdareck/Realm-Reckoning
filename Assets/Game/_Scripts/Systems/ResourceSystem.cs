@@ -14,7 +14,7 @@ namespace Game._Scripts.Systems
     public class ResourceSystem : StaticInstance<ResourceSystem>
     {
         public List<UnitDataSO> UnitDatas { get; private set; }
-        private Dictionary<UnitTagSO, UnitDataSO> _UnitDatasDict;
+        private Dictionary<string, UnitDataSO> _UnitDatasDict;
 
         protected override void Awake()
         {
@@ -25,10 +25,10 @@ namespace Game._Scripts.Systems
         private void AssembleResources()
         {
             UnitDatas = Resources.LoadAll<UnitDataSO>("UnitData").ToList();
-            _UnitDatasDict = UnitDatas.ToDictionary(r => r.unitTags[0], r => r);
+            _UnitDatasDict = UnitDatas.ToDictionary(r => r.unitName, r => r);
         }
 
-        public UnitDataSO GetExampleHero(UnitTagSO t)
+        public UnitDataSO GetExampleHero(string t)
         {
             return _UnitDatasDict[t];
         }

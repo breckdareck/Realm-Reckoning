@@ -23,11 +23,11 @@ MonoBehaviour:
     SerializationNodes:
     - Name: stats
       Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[Game._Scripts.Stats.GeneralStat,
+      Data: 0|System.Collections.Generic.Dictionary`2[[Game._Scripts.Enums.GeneralStat,
         Assembly-CSharp],[System.Single, mscorlib]], mscorlib
     - Name: comparer
       Entry: 7
-      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[Game._Scripts.Stats.GeneralStat,
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[Game._Scripts.Enums.GeneralStat,
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
@@ -121,7 +121,31 @@ MonoBehaviour:
       Data: 0
     - Name: $v
       Entry: 4
-      Data: 5
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 4
+      Data: 0
     - Name: 
       Entry: 8
       Data: 
@@ -334,18 +358,6 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 3
-      Data: 2
-    - Name: $v
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
       Data: 15
     - Name: $v
       Entry: 4
@@ -378,25 +390,13 @@ MonoBehaviour:
       Entry: 8
       Data: 
     - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 1
-    - Name: $v
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
       Entry: 13
       Data: 
     - Name: 
       Entry: 8
       Data: 
   GearSlots:
-  - <Gear>k__BackingField: {fileID: 11400000, guid: cd7bd71356970d744b946771d78e65f9, type: 2}
+  - <Gear>k__BackingField: {fileID: 0}
     <GearType>k__BackingField: 0
     <IsEquipped>k__BackingField: 0
   - <Gear>k__BackingField: {fileID: 0}

@@ -6,58 +6,95 @@ namespace Game._Scripts.Interfaces
 {
     public class AttackCommand : ICommand
     {
-        private readonly int _damageAmount;
+        private readonly int _damageAmountPercent;
         private readonly bool _canPierceBarrier;
+        private readonly DamageType _damageType;
 
-        public AttackCommand(int damageAmount, bool canPierceBarrier)
+        public AttackCommand(int damageAmountPercent, bool canPierceBarrier, DamageType damageType)
         {
-            _damageAmount = damageAmount;
+            _damageAmountPercent = damageAmountPercent;
             _canPierceBarrier = canPierceBarrier;
+            _damageType = damageType;
         }
 
         public void Execute(Unit source, Unit target)
         {
             var damage = 0;
+            var chanceToHit = 100f;
 
-            // TODO: Implement Barrier Piercing
-            var sourcePA = source.UnitsDataSo.persistentDataSo.stats[GeneralStat.PhysicalAccuracy];
-            var targetPD = target.UnitsDataSo.persistentDataSo.stats[GeneralStat.PhysicalDodge];
-            var chanceToHit = 100 - Mathf.Clamp(targetPD - sourcePA, 0, 100);
+            if (_damageType == DamageType.PhysicalDamage)
+            {
+                var sourcePA = source.CurrentBattleStats[GeneralStat.PhysicalAccuracy];
+                var targetPD = target.CurrentBattleStats[GeneralStat.PhysicalDodge];
+                chanceToHit = 100 - Mathf.Clamp(targetPD - sourcePA, 0, 100);
+            }
+            else
+            {
+                var sourceMA = source.CurrentBattleStats[GeneralStat.MagikAccuracy];
+                var targetMD = target.CurrentBattleStats[GeneralStat.MagikDodge];
+                chanceToHit = 100 - Mathf.Clamp(targetMD - sourceMA, 0, 100);
+            }
+            
             var hitLanded = Random.Range(0f, 100f) <= chanceToHit;
 
             if (!hitLanded)
             {
                 damage = 0;
-                target.ApplyDamage(damage);
+                target.ApplyDamage(damage,true);
                 return;
             }
 
-            damage = (int)((float)_damageAmount / 100 *
-                           source.UnitsDataSo.persistentDataSo.stats[GeneralStat.PhysicalOffense]);
-            // TODO - Implement Magik Attacks
+            var chanceToCrit = 0f;
 
-            var sourcePCC = source.UnitsDataSo.persistentDataSo.stats[GeneralStat.PhysicalCriticalChance];
-            var targetPCA = target.UnitsDataSo.persistentDataSo.stats[GeneralStat.PhysicalCriticalAvoidance];
-            var chanceToCrit = Mathf.Clamp(sourcePCC - targetPCA, 0, 100);
+            if (_damageType == DamageType.PhysicalDamage)
+            {
+                damage = (int)((float)_damageAmountPercent / 100 *
+                               source.CurrentBattleStats[GeneralStat.PhysicalOffense]);
+                var sourcePCC = source.CurrentBattleStats[GeneralStat.PhysicalCriticalChance];
+                var targetPCA = target.CurrentBattleStats[GeneralStat.PhysicalCriticalAvoidance];
+                chanceToCrit = Mathf.Clamp(sourcePCC - targetPCA, 0, 100);
+            }
+            else
+            {
+                damage = (int)((float)_damageAmountPercent / 100 *
+                               source.CurrentBattleStats[GeneralStat.MagikOffense]);
+                var sourceMCC = source.CurrentBattleStats[GeneralStat.MagikCriticalChance];
+                var targetMCA = target.CurrentBattleStats[GeneralStat.MagikCriticalAvoidance];
+                chanceToCrit = Mathf.Clamp(sourceMCC - targetMCA, 0, 100);
+            }
+            
             var isCrit = Random.Range(0f, 100f) <= chanceToCrit;
 
             if (isCrit)
-                damage = (int)(damage * source.UnitsDataSo.persistentDataSo.stats[GeneralStat.CriticalDamage] / 100);
+                damage = (int)(damage * (source.CurrentBattleStats[GeneralStat.CriticalDamage] / 100f));
 
-            var sourceAP = source.UnitsDataSo.persistentDataSo.stats[GeneralStat.ArmorPierce];
-            var targetArmor = target.UnitsDataSo.persistentDataSo.stats[GeneralStat.Armor];
-            var remainingArmorPercent = Mathf.Clamp(targetArmor - sourceAP, 0, 100) / 100;
+            
+            if (_damageType == DamageType.PhysicalDamage)
+            {
+                var sourceAP = source.CurrentBattleStats[GeneralStat.ArmorPierce];
+                var targetArmor = target.CurrentBattleStats[GeneralStat.Armor];
+                var remainingArmorPercent = Mathf.Clamp(targetArmor - sourceAP, 0, 100) / 100;
+                
+                damage -= (int)(damage * remainingArmorPercent);
+            }
+            else
+            {
+                var sourceMP = source.CurrentBattleStats[GeneralStat.MagikArmorPierce];
+                var targetMagikArmor = target.CurrentBattleStats[GeneralStat.MagikArmor];
+                var remainingMagikArmorPercent = Mathf.Clamp(targetMagikArmor - sourceMP, 0, 100) / 100;
+                
+                damage -= (int)(damage * remainingMagikArmorPercent);
+            }
 
-            var sourceDN = source.UnitsDataSo.persistentDataSo.stats[GeneralStat.DefenseNegation];
+            var sourceDN = source.CurrentBattleStats[GeneralStat.DefenseNegation];
             var guranteedDamage = (int)(damage * (sourceDN / 100));
-
-            damage -= (int)(damage * remainingArmorPercent);
-
+            
             damage += guranteedDamage;
-
+            
+            // TODO: Implement Barrier Piercing
             // TODO - Implement Health Steal
 
-            target.ApplyDamage(Mathf.Clamp(damage, 0, 99999));
+            target.ApplyDamage(Mathf.Clamp(damage, 0, 99999),false);
         }
     }
 }

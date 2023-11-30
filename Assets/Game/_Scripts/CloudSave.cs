@@ -12,44 +12,8 @@ using UnityEngine;
 
 namespace Game._Scripts
 {
-    public class CloudSave : PersistentSingleton<CloudSave>
+    public static class CloudSave
     {
-        protected override async void Awake()
-        {
-            base.Awake();
-            // Cloud Save needs to be initialized along with the other Unity Services that
-            // it depends on (namely, Authentication), and then the user must sign in.
-            await UnityServices.InitializeAsync();
-            await SignInAnonymouslyAsync();
-            DontDestroyOnLoad(this);
-            //Debug.Log($"Signed in? PlayerID: {AuthenticationService.Instance.PlayerId}");
-        }
-
-        private async Task SignInAnonymouslyAsync()
-        {
-            try
-            {
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                Debug.Log("Sign in anonymously succeeded!");
-
-                // Shows how to get the playerID
-                Debug.Log($"PlayerID: {AuthenticationService.Instance.PlayerId}");
-            }
-            catch (AuthenticationException ex)
-            {
-                // Compare error code to AuthenticationErrorCodes
-                // Notify the player with the proper error message
-                Debug.LogException(ex);
-            }
-            catch (RequestFailedException ex)
-            {
-                // Compare error code to CommonErrorCodes
-                // Notify the player with the proper error message
-                Debug.LogException(ex);
-            }
-        }
-
-
         public static async void SaveUnit(UnitDataSO unitData)
         {
             try
@@ -57,9 +21,9 @@ namespace Game._Scripts
                 var data = new Dictionary<string, object>();
 
                 data.Add(unitData.name, new UnitDataSO.UnitSaveData(
-                    (int)unitData.persistentDataSo.stats[GeneralStat.Level],
-                    (int)unitData.persistentDataSo.stats[GeneralStat.StarRating],
-                    (int)unitData.persistentDataSo.stats[GeneralStat.Experience]));
+                    (int)unitData.currentUnitStats[GeneralStat.Level],
+                    (int)unitData.currentUnitStats[GeneralStat.StarRating],
+                    (int)unitData.currentUnitStats[GeneralStat.Experience]));
 
                 // Saving the data without write lock validation by passing the data as an object instead of a SaveItem
                 var result =
@@ -91,9 +55,9 @@ namespace Game._Scripts
 
                 foreach (var unitData in unitDatas)
                     data.Add(unitData.name, new UnitDataSO.UnitSaveData(
-                        (int)unitData.persistentDataSo.stats[GeneralStat.Level],
-                        (int)unitData.persistentDataSo.stats[GeneralStat.StarRating],
-                        (int)unitData.persistentDataSo.stats[GeneralStat.Experience]));
+                        (int)unitData.currentUnitStats[GeneralStat.Level],
+                        (int)unitData.currentUnitStats[GeneralStat.StarRating],
+                        (int)unitData.currentUnitStats[GeneralStat.Experience]));
 
                 // Saving the data without write lock validation by passing the data as an object instead of a SaveItem
                 var result =

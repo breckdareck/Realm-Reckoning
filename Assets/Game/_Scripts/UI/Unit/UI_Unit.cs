@@ -68,7 +68,8 @@ namespace Game._Scripts.UI.Unit
 
         public void SetEnemyTargetAnim()
         {
-            enemyTargetAnim.gameObject.SetActive(!enemyTargetAnim.gameObject.activeInHierarchy);
+            if(enemyTargetAnim != null)
+                enemyTargetAnim.gameObject.SetActive(!enemyTargetAnim.gameObject.activeInHierarchy);
         }
 
         public void CreateDamageText(string text)

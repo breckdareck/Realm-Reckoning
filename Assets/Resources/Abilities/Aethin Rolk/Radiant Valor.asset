@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37e27d2801f52054da6f8f57fde725b4, type: 3}
+  m_Name: Radiant Valor
+  m_EditorClassIdentifier: 
+  abilityName: Radiant Valor
+  actions:
+  - actionType: 0
+    targetType: 4
+    targetSelection: 1
+    damageType: 0
+    damagePercent: 115
+    healAmount: 0
+    barrierAmount: 0
+    statusEffect: []
+  - actionType: 2
+    targetType: 4
+    targetSelection: 1
+    damageType: 0
+    damagePercent: 0
+    healAmount: 0
+    barrierAmount: 0
+    statusEffect:
+    - {fileID: 11400000, guid: 0b196b7786a540445b59b29933735ff6, type: 2}
+  - actionType: 2
+    targetType: 3
+    targetSelection: 1
+    damageType: 0
+    damagePercent: 0
+    healAmount: 0
+    barrierAmount: 0
+    statusEffect:
+    - {fileID: 11400000, guid: 4cea7cc1f58e63248b32591f1dfeb49b, type: 2}

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c5d3c94d7b54c7f824e84623063982a, type: 3}
+  m_Name: Offense Up
+  m_EditorClassIdentifier: 
+  <StatusEffectName>k__BackingField: Offense Up
+  <StatusEffectType>k__BackingField: 0
+  <StatusEffectCalculationType>k__BackingField: 1
+  <CanStack>k__BackingField: 0
+  <StackCount>k__BackingField: 1
+  <MaxStackCount>k__BackingField: 1
+  <Dispellable>k__BackingField: 1
+  <Preventable>k__BackingField: 1
+  <AppliedThisTurn>k__BackingField: 1
+  <TurnsEffected>k__BackingField: 1
+  <RemainingTurnsEffected>k__BackingField: 1
+  <StatusEffectDatas>k__BackingField:
+  - <StatEffected>k__BackingField: 15
+    <EffectAmountPercent>k__BackingField: 15
+  - <StatEffected>k__BackingField: 22
+    <EffectAmountPercent>k__BackingField: 15

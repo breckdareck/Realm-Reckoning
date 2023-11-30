@@ -111,8 +111,8 @@ namespace Game._Scripts.Battle
             _allUnits.AddRange(EnemyUnits);
 
             _allUnits.Sort((a, b) =>
-                b.UnitsDataSo.persistentDataSo.stats[GeneralStat.Speed]
-                    .CompareTo(a.UnitsDataSo.persistentDataSo.stats[GeneralStat.Speed]));
+                b.UnitsDataSo.currentUnitStats[GeneralStat.Speed]
+                    .CompareTo(a.UnitsDataSo.currentUnitStats[GeneralStat.Speed]));
         }
 
         private void CreateStateMachine()

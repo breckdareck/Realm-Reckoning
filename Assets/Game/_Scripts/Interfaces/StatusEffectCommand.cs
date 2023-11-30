@@ -19,15 +19,25 @@ namespace Game._Scripts.Interfaces
         {
             if (target.IsAIUnit)
             {
-                var sourcePOT = source.UnitsDataSo.persistentDataSo.stats[GeneralStat.Potency];
-                var targetRES = target.UnitsDataSo.persistentDataSo.stats[GeneralStat.Resilience];
+                var sourcePOT = source.CurrentBattleStats[GeneralStat.Potency];
+                var targetRES = target.CurrentBattleStats[GeneralStat.Resilience];
                 var chanceToHit = 100 - Mathf.Clamp(targetRES - sourcePOT, 0, 100);
 
                 var hitLanded = Random.Range(0f, 100f) <= chanceToHit;
-                if (!hitLanded) return;
+                if (!hitLanded)
+                {
+                    Debug.Log($"{source.name}'s StatusEffect was Resisted by {target.name}");
+                    return;
+                }
+                    
             }
 
-            foreach (var statusEffect in _statusEffects) target.ApplyStatusEffect(statusEffect);
+            foreach (var statusEffect in _statusEffects)
+            {
+                Debug.Log($"{target.name} was Afflicted with {statusEffect.StatusEffectName} by {source.name}");
+                target.ApplyStatusEffect(statusEffect);
+            }
+                
         }
     }
 }

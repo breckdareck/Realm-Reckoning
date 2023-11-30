@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2875445991031685185
 MonoBehaviour:
@@ -45,15 +45,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerUnlockedUnits:
-  - {fileID: 11400000, guid: 1618334785e45fd48926603e28bd0e41, type: 2}
-  - {fileID: 11400000, guid: e148f83d38f8e464db399c321b9a1a01, type: 2}
-  - {fileID: 11400000, guid: d611ecb82b9eb9343a36402d61e309ac, type: 2}
-  - {fileID: 11400000, guid: f257e0a558f143d40ab6ebf4ff96b9da, type: 2}
-  - {fileID: 11400000, guid: ee1b0e39ab147984e9fe042e6a87cf46, type: 2}
+  - {fileID: 11400000, guid: 8a36b2ee083c8784396b35a684dd81b1, type: 2}
+  - {fileID: 11400000, guid: 90c4db4f831a2d047ae828f5abbb4503, type: 2}
+  - {fileID: 11400000, guid: f7245b5b4a5ac7c4482b60a2b88798dc, type: 2}
+  - {fileID: 11400000, guid: 7f5c62c506b41a041a129a6d58949778, type: 2}
+  - {fileID: 11400000, guid: b76b28a333ee50341b1e16a02d5f7125, type: 2}
+  - {fileID: 11400000, guid: 3e0c7e789b6277e4e9dd7abfd7e8cb9c, type: 2}
+  - {fileID: 11400000, guid: e61cf5d2a5e8ef34e8f6edd08224effb, type: 2}
+  - {fileID: 11400000, guid: 2b3e905935c011444b55d13cb2d2e805, type: 2}
+  - {fileID: 11400000, guid: d2dde0c8c8bd2674e8e242a64baaf517, type: 2}
+  - {fileID: 11400000, guid: 04bf56f921bcc3046be1bd7a99ad676c, type: 2}
+  - {fileID: 11400000, guid: 7fcc7cfd17fd0a349a2ae2e7ab65f395, type: 2}
+  - {fileID: 11400000, guid: 7b877a5898a420d4f9528145789a006b, type: 2}
+  - {fileID: 11400000, guid: eb7ddd05dd570094d8134c067686d786, type: 2}
+  - {fileID: 11400000, guid: e0337d2ca28d34d4195998dfbeee807f, type: 2}
+  - {fileID: 11400000, guid: 52120d6fcef3fa948b890dfb13c5ddad, type: 2}
+  - {fileID: 11400000, guid: d91471eb5d95a5d4bbca3d71a196821f, type: 2}
+  - {fileID: 11400000, guid: 0985969c51415b04d81117ba8ba2371c, type: 2}
+  - {fileID: 11400000, guid: f20188e1da8d0514ca4e3c619f278703, type: 2}
+  - {fileID: 11400000, guid: c7ee001c62da5574a942b8a724d5ddcf, type: 2}
+  - {fileID: 11400000, guid: eab1a3710b520a94db809db105b3cf81, type: 2}
+  - {fileID: 11400000, guid: 42f45fb4615796b42a4cade165052d3c, type: 2}
+  - {fileID: 11400000, guid: 6fe9e3f38492b214983d8a8f9fe7f8db, type: 2}
+  - {fileID: 11400000, guid: 8dcbb4815967c6641a89935d33c889c9, type: 2}
+  - {fileID: 11400000, guid: 497d9629972336040bad0f1b6b481fc9, type: 2}
+  - {fileID: 11400000, guid: 452c737d83fe80b439a66679ec6ccf19, type: 2}
   playerTeam:
-  - {fileID: 11400000, guid: 1618334785e45fd48926603e28bd0e41, type: 2}
-  - {fileID: 11400000, guid: e148f83d38f8e464db399c321b9a1a01, type: 2}
-  - {fileID: 11400000, guid: d611ecb82b9eb9343a36402d61e309ac, type: 2}
-  - {fileID: 11400000, guid: f257e0a558f143d40ab6ebf4ff96b9da, type: 2}
-  - {fileID: 11400000, guid: ee1b0e39ab147984e9fe042e6a87cf46, type: 2}
-  playerUnits: []
+  - {fileID: 11400000, guid: 90c4db4f831a2d047ae828f5abbb4503, type: 2}
+  - {fileID: 11400000, guid: f7245b5b4a5ac7c4482b60a2b88798dc, type: 2}

@@ -23,11 +23,11 @@ MonoBehaviour:
     SerializationNodes:
     - Name: stats
       Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[Game._Scripts.Stats.GeneralStat,
+      Data: 0|System.Collections.Generic.Dictionary`2[[Game._Scripts.Enums.GeneralStat,
         Assembly-CSharp],[System.Single, mscorlib]], mscorlib
     - Name: comparer
       Entry: 7
-      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[Game._Scripts.Stats.GeneralStat,
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[Game._Scripts.Enums.GeneralStat,
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
@@ -40,7 +40,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 28
+      Data: 29
     - Name: 
       Entry: 7
       Data: 
@@ -122,6 +122,30 @@ MonoBehaviour:
     - Name: $v
       Entry: 4
       Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 4
+      Data: 0
     - Name: 
       Entry: 8
       Data: 
@@ -323,18 +347,6 @@ MonoBehaviour:
     - Name: $k
       Entry: 3
       Data: 28
-    - Name: $v
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 3
-      Data: 2
     - Name: $v
       Entry: 4
       Data: 0

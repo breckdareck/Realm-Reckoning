@@ -27,8 +27,9 @@ namespace Game._Scripts.Tools
 
                 // Create new Scriptable Objects
                 var unitData = ScriptableObject.CreateInstance<UnitDataSO>();
-                var unitStats = ScriptableObject.CreateInstance<BaseStatsSO>();
-                ;
+                
+                unitData.baseUnitStats = new Dictionary<GeneralStat, float>();
+                
                 FactionSO factionSo;
                 UnitRankSO rankSo;
                 var tags = new List<UnitTagSO>();
@@ -47,58 +48,58 @@ namespace Game._Scripts.Tools
                             break;
                         case "faction":
                             factionSo = LoadOrCreateScriptableObject<FactionSO>(
-                                $"Assets/Game/Scriptables/Resources/UnitFactions/{value}.asset");
+                                $"Assets/Resources/UnitFactions/{value}.asset");
                             factionSo.factionName = value;
                             unitData.unitFactionSo = factionSo;
                             break;
                         case "rank":
                             rankSo = LoadOrCreateScriptableObject<UnitRankSO>(
-                                $"Assets/Game/Scriptables/Resources/UnitRanks/{value}.asset");
+                                $"Assets/Resources/UnitRanks/{value}.asset");
                             rankSo.unitRank = value;
                             unitData.unitRankSo = rankSo;
                             break;
                         case "baselevel":
-                            CheckStatsForExistingKeyValue(unitStats, GeneralStat.Level, value);
+                            unitData.baseUnitStats.Add(GeneralStat.Level, float.Parse(value));
                             break;
                         case "basestr":
-                            CheckStatsForExistingKeyValue(unitStats, GeneralStat.Strength, value);
+                            unitData.baseUnitStats.Add(GeneralStat.Strength, float.Parse(value));
                             break;
                         case "addstrperlevel":
-                            CheckStatsForExistingKeyValue(unitStats, LevelUpBonus.StrengthPerLevel, value);
+                            unitData.unitLevelUpBonus.Add(LevelUpBonus.StrengthPerLevel, float.Parse(value));
                             break;
                         case "baseagi":
-                            CheckStatsForExistingKeyValue(unitStats, GeneralStat.Agility, value);
+                            unitData.baseUnitStats.Add(GeneralStat.Agility, float.Parse(value));
                             break;
                         case "addagiperlevel":
-                            CheckStatsForExistingKeyValue(unitStats, LevelUpBonus.AgilityPerLevel, value);
+                            unitData.unitLevelUpBonus.Add(LevelUpBonus.AgilityPerLevel, float.Parse(value));
                             break;
                         case "basemag":
-                            CheckStatsForExistingKeyValue(unitStats, GeneralStat.Magik, value);
+                            unitData.baseUnitStats.Add(GeneralStat.Magik, float.Parse(value));
                             break;
                         case "addmagperlevel":
-                            CheckStatsForExistingKeyValue(unitStats, LevelUpBonus.MagikPerLevel, value);
+                            unitData.unitLevelUpBonus.Add(LevelUpBonus.MagikPerLevel, float.Parse(value));
                             break;
                         case "speed":
-                            CheckStatsForExistingKeyValue(unitStats, GeneralStat.Speed, value);
+                            unitData.baseUnitStats.Add(GeneralStat.Speed, float.Parse(value));
                             break;
                         case "basearmor":
-                            CheckStatsForExistingKeyValue(unitStats, GeneralStat.Armor, value);
+                            unitData.baseUnitStats.Add(GeneralStat.Armor, float.Parse(value));
                             break;
                         case "basemagarmor":
-                            CheckStatsForExistingKeyValue(unitStats, GeneralStat.MagikArmor, value);
+                            unitData.baseUnitStats.Add(GeneralStat.MagikArmor, float.Parse(value));
                             break;
                         case "armoraddedperlevel":
-                            CheckStatsForExistingKeyValue(unitStats, LevelUpBonus.ArmorPerLevel, value);
+                            unitData.unitLevelUpBonus.Add(LevelUpBonus.ArmorPerLevel, float.Parse(value));
                             break;
                         case "magarmoraddedperlevel":
-                            CheckStatsForExistingKeyValue(unitStats, LevelUpBonus.MagikArmorPerLevel, value);
+                            unitData.unitLevelUpBonus.Add(LevelUpBonus.MagikArmorPerLevel, float.Parse(value));
                             break;
                         default:
                             if (header.StartsWith("tag_"))
                             {
                                 if (value is null or "") continue;
                                 var tag = LoadOrCreateScriptableObject<UnitTagSO>(
-                                    $"Assets/Game/Scriptables/Resources/UnitTags/{value}.asset");
+                                    $"Assets/Resources/UnitTags/{value}.asset");
                                 tag.unitTag = value;
                                 tags.Add(tag);
                             }
@@ -108,39 +109,16 @@ namespace Game._Scripts.Tools
                 }
 
                 // Save the Scriptable Objects
-                unitData.baseStatsSo = unitStats;
                 unitData.unitTags = tags.ToArray();
-                AssetDatabase.CreateAsset(unitStats,
-                    $"Assets/Game/Scriptables/Resources/UnitStats/{unitData.unitName}_Base_Stats.asset");
+                unitData.SetupDefaultBaseStats();
+
                 AssetDatabase.CreateAsset(unitData,
-                    $"Assets/Game/Scriptables/Resources/UnitData/{unitData.unitName}.asset");
+                    $"Assets/Resources/UnitData/{unitData.unitName}.asset");
                 Debug.Log($"Assets Created: {unitData.unitName}");
             }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-        }
-
-        private static void CheckStatsForExistingKeyValue(BaseStatsSO unitBaseStatsSo, Enum stat, string value)
-        {
-            switch (stat)
-            {
-                case GeneralStat generalStat:
-                    if (unitBaseStatsSo.generalStats.ContainsKey(generalStat))
-                        unitBaseStatsSo.generalStats[generalStat] = float.TryParse(value, out var result) ? result : 1;
-                    else
-                        unitBaseStatsSo.generalStats.Add(generalStat,
-                            float.TryParse(value, out var result) ? result : 1);
-                    break;
-                case LevelUpBonus levelUpBonus:
-                    if (unitBaseStatsSo.levelUpBonuses.ContainsKey(levelUpBonus))
-                        unitBaseStatsSo.levelUpBonuses[levelUpBonus] =
-                            float.TryParse(value, out var result) ? result : 1;
-                    else
-                        unitBaseStatsSo.levelUpBonuses.Add(levelUpBonus,
-                            float.TryParse(value, out var result) ? result : 1);
-                    break;
-            }
         }
 
         private static T LoadOrCreateScriptableObject<T>(string path) where T : ScriptableObject
