@@ -6,6 +6,6 @@
         Ally,
         Self,
         AllAllies,
-        AllEnemies,
+        AllEnemies
     }
 }

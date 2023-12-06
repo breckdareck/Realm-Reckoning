@@ -18,56 +18,61 @@ namespace Game._Scripts.Battle
     {
         private BattleState _currentState;
         private int _currentUnitIndex;
-        private List<Unit> _playerUnits;
-        private List<Unit> _enemyUnits;
-        private List<Unit> _allUnits;
-        
+        private List<BattleUnit> _playerUnits;
+        private List<BattleUnit> _enemyUnits;
+        private List<BattleUnit> _allUnits;
+
         private PlayerTurnHandler _playerTurnHandler;
         private EnemyTurnHandler _enemyTurnHandler;
         private AbilityExecutor _abilityExecutor;
-        
-        private AbilitySO _selectedAbilitySo;
-        private Unit _selectedUnit;
-        private Unit _targetedEnemyUnit;
-        private Unit _lastTargetedUnit;
-        
-        public BattleState CurrentState => _currentState;
-        public List<Unit> PlayerUnits => _playerUnits;
-        public List<Unit> EnemyUnits => _enemyUnits;
-        
 
-        public BattleStateMachine(List<Unit> playerUnits, List<Unit> enemyUnits, List<Unit> allUnits)
+        private AbilitySO _selectedAbilitySo;
+        private BattleUnit _selectedBattleUnit;
+        private BattleUnit _targetedEnemyBattleUnit;
+        private BattleUnit _lastTargetedBattleUnit;
+
+        public BattleState CurrentState => _currentState;
+        public List<BattleUnit> PlayerUnits => _playerUnits;
+        public List<BattleUnit> EnemyUnits => _enemyUnits;
+
+
+        public BattleStateMachine(List<BattleUnit> playerUnits, List<BattleUnit> enemyUnits, List<BattleUnit> allUnits)
         {
             _playerUnits = playerUnits;
             _enemyUnits = enemyUnits;
             _allUnits = allUnits;
-            
+
             _abilityExecutor = new AbilityExecutor();
             _playerTurnHandler = new PlayerTurnHandler(this, _abilityExecutor);
             _enemyTurnHandler = new EnemyTurnHandler(this, _abilityExecutor);
         }
-        
+
 
         public void Update()
         {
-            if (_targetedEnemyUnit.IsDead && _currentState != BattleState.End)
+            if (_targetedEnemyBattleUnit.IsDead && _currentState != BattleState.End)
             {
-                _targetedEnemyUnit = EnemyUnits.Find(x => !x.IsDead);
-                _targetedEnemyUnit.UIUnit.SetEnemyTargetAnim();
+                _targetedEnemyBattleUnit = EnemyUnits.Find(x => !x.IsDead);
+                _targetedEnemyBattleUnit.UIBattleUnit.SetEnemyTargetAnim();
             }
-                
+
             if (_currentState == BattleState.TurnCycle)
             {
                 if (GetActiveUnit().IsTakingTurn) return;
-                foreach (var x in _allUnits)
-                {
-                    if(x.IsDead) continue;
-                    x.UpdateTurnProgress(Time.deltaTime * 10);
-                    if (!(x.TurnProgress >= 1000f)) continue;
-                    _currentUnitIndex = _allUnits.IndexOf(x);
-                    SetState(GetNextUnitTurn());
-                    return;
-                }
+                UpdateUnitsProgress();
+            }
+        }
+        
+        private void UpdateUnitsProgress()
+        {
+            foreach (var x in _allUnits)
+            {
+                if (x.IsDead) continue;
+                x.UpdateTurnProgress(Time.deltaTime * 10);
+                if (!(x.TurnProgress >= 1000f)) continue;
+                _currentUnitIndex = _allUnits.IndexOf(x);
+                SetState(GetNextUnitTurn());
+                return;
             }
         }
 
@@ -106,16 +111,16 @@ namespace Game._Scripts.Battle
 
         private void StartBattle()
         {
-            _targetedEnemyUnit = _enemyUnits[0];
-            _targetedEnemyUnit.UIUnit.SetEnemyTargetAnim();
+            _targetedEnemyBattleUnit = _enemyUnits[0];
+            _targetedEnemyBattleUnit.UIBattleUnit.SetEnemyTargetAnim();
             EventManager.Instance.OnUnitSelectedChangedEvent += OnUnitSelected;
             SetState(BattleState.TurnCycle);
         }
-        
+
         private void EndTurn()
         {
             Debug.Log("End of turn");
-            
+
             GetActiveUnit().EndTurn();
 
             SetState(IsBattleOver() ? BattleState.End : BattleState.TurnCycle);
@@ -123,9 +128,9 @@ namespace Game._Scripts.Battle
 
         private void EndBattle()
         {
-            SceneManager.LoadScene("EnergyTest");
+            SceneManager.LoadScene("MainMenu");
         }
-        
+
         private BattleState GetNextUnitTurn()
         {
             return _playerUnits.Contains(_allUnits[_currentUnitIndex])
@@ -145,44 +150,45 @@ namespace Game._Scripts.Battle
                 Debug.Log("Battle Ended : Player Wins");
                 return true;
             }
-            return false; 
+
+            return false;
         }
 
-        public Unit GetActiveUnit()
+        public BattleUnit GetActiveUnit()
         {
             return _allUnits[_currentUnitIndex];
         }
-        
-        public void OnUnitSelected(Unit clickedUnit)
+
+        public void OnUnitSelected(BattleUnit clickedBattleUnit)
         {
             // Set the selected unit in the BattleSystem
-            if (_enemyUnits.Contains(clickedUnit))
+            if (_enemyUnits.Contains(clickedBattleUnit))
             {
-                _targetedEnemyUnit.UIUnit.SetEnemyTargetAnim();
-                _targetedEnemyUnit = clickedUnit;
-                _targetedEnemyUnit.UIUnit.SetEnemyTargetAnim();
+                _targetedEnemyBattleUnit.UIBattleUnit.SetEnemyTargetAnim();
+                _targetedEnemyBattleUnit = clickedBattleUnit;
+                _targetedEnemyBattleUnit.UIBattleUnit.SetEnemyTargetAnim();
             }
 
             if (_abilityExecutor.WaitingForTargetSelection)
             {
-                _selectedUnit = clickedUnit;
+                _selectedBattleUnit = clickedBattleUnit;
                 _abilityExecutor.SetWaitingForSelectionFalse();
             }
         }
 
-        public Unit GetSelectedUnit()
+        public BattleUnit GetSelectedUnit()
         {
-            return _selectedUnit;
+            return _selectedBattleUnit;
         }
 
         public void ResetSelectedUnit()
         {
-            _selectedUnit = null;
+            _selectedBattleUnit = null;
         }
 
-        public Unit GetTargetUnit()
+        public BattleUnit GetTargetUnit()
         {
-            return _targetedEnemyUnit;
+            return _targetedEnemyBattleUnit;
         }
     }
 }

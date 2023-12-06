@@ -5,6 +5,6 @@ namespace Game._Scripts.Interfaces
 {
     public interface ICommand
     {
-        void Execute(Unit source, Unit target);
+        void Execute(BattleUnit source, BattleUnit target);
     }
 }

@@ -15,16 +15,16 @@ namespace Game._Scripts.Battle
             _battleStateMachine = battleStateMachine;
             _abilityExecutor = abilityExecutor;
         }
-        
+
         public async void StartEnemyTurn()
         {
             Debug.Log("Enemy's turn");
 
             EventManager.Instance.InvokeOnStepChanged("Wait For Enemy Turn");
 
-            var abilityChosen = Random.Range(0, _battleStateMachine.GetActiveUnit().UnitsDataSo.abilities.Length);
+            var abilityChosen = Random.Range(0, _battleStateMachine.GetActiveUnit().Unit.UnitData.abilities.Length);
 
-            var selectedAbility = _battleStateMachine.GetActiveUnit().UnitsDataSo.abilities[abilityChosen];
+            var selectedAbility = _battleStateMachine.GetActiveUnit().Unit.UnitData.abilities[abilityChosen];
 
             await _abilityExecutor.ExecuteAbility(selectedAbility, _battleStateMachine.GetActiveUnit());
 

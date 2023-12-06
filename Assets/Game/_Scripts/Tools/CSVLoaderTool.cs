@@ -27,9 +27,9 @@ namespace Game._Scripts.Tools
 
                 // Create new Scriptable Objects
                 var unitData = ScriptableObject.CreateInstance<UnitDataSO>();
-                
+
                 unitData.baseUnitStats = new Dictionary<GeneralStat, float>();
-                
+
                 FactionSO factionSo;
                 UnitRankSO rankSo;
                 var tags = new List<UnitTagSO>();

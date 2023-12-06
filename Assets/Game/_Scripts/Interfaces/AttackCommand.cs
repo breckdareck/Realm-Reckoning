@@ -17,84 +17,89 @@ namespace Game._Scripts.Interfaces
             _damageType = damageType;
         }
 
-        public void Execute(Unit source, Unit target)
+        public void Execute(BattleUnit source, BattleUnit target)
         {
             var damage = 0;
-            var chanceToHit = 100f;
-
-            if (_damageType == DamageType.PhysicalDamage)
-            {
-                var sourcePA = source.CurrentBattleStats[GeneralStat.PhysicalAccuracy];
-                var targetPD = target.CurrentBattleStats[GeneralStat.PhysicalDodge];
-                chanceToHit = 100 - Mathf.Clamp(targetPD - sourcePA, 0, 100);
-            }
-            else
-            {
-                var sourceMA = source.CurrentBattleStats[GeneralStat.MagikAccuracy];
-                var targetMD = target.CurrentBattleStats[GeneralStat.MagikDodge];
-                chanceToHit = 100 - Mathf.Clamp(targetMD - sourceMA, 0, 100);
-            }
+            var chanceToHit = CalculateHitChance(source, target, _damageType);
             
             var hitLanded = Random.Range(0f, 100f) <= chanceToHit;
 
             if (!hitLanded)
             {
                 damage = 0;
-                target.ApplyDamage(damage,true);
+                target.ApplyDamage(damage, true);
                 return;
             }
 
-            var chanceToCrit = 0f;
-
-            if (_damageType == DamageType.PhysicalDamage)
-            {
-                damage = (int)((float)_damageAmountPercent / 100 *
-                               source.CurrentBattleStats[GeneralStat.PhysicalOffense]);
-                var sourcePCC = source.CurrentBattleStats[GeneralStat.PhysicalCriticalChance];
-                var targetPCA = target.CurrentBattleStats[GeneralStat.PhysicalCriticalAvoidance];
-                chanceToCrit = Mathf.Clamp(sourcePCC - targetPCA, 0, 100);
-            }
-            else
-            {
-                damage = (int)((float)_damageAmountPercent / 100 *
-                               source.CurrentBattleStats[GeneralStat.MagikOffense]);
-                var sourceMCC = source.CurrentBattleStats[GeneralStat.MagikCriticalChance];
-                var targetMCA = target.CurrentBattleStats[GeneralStat.MagikCriticalAvoidance];
-                chanceToCrit = Mathf.Clamp(sourceMCC - targetMCA, 0, 100);
-            }
+            damage = CalculateDamage(source);
             
+            var chanceToCrit = CalculateCritChance(source, target, _damageType);
             var isCrit = Random.Range(0f, 100f) <= chanceToCrit;
-
             if (isCrit)
                 damage = (int)(damage * (source.CurrentBattleStats[GeneralStat.CriticalDamage] / 100f));
 
             
-            if (_damageType == DamageType.PhysicalDamage)
-            {
-                var sourceAP = source.CurrentBattleStats[GeneralStat.ArmorPierce];
-                var targetArmor = target.CurrentBattleStats[GeneralStat.Armor];
-                var remainingArmorPercent = Mathf.Clamp(targetArmor - sourceAP, 0, 100) / 100;
-                
-                damage -= (int)(damage * remainingArmorPercent);
-            }
-            else
-            {
-                var sourceMP = source.CurrentBattleStats[GeneralStat.MagikArmorPierce];
-                var targetMagikArmor = target.CurrentBattleStats[GeneralStat.MagikArmor];
-                var remainingMagikArmorPercent = Mathf.Clamp(targetMagikArmor - sourceMP, 0, 100) / 100;
-                
-                damage -= (int)(damage * remainingMagikArmorPercent);
-            }
+            damage -= CalculateArmorReduction(source, target, damage);
 
             var sourceDN = source.CurrentBattleStats[GeneralStat.DefenseNegation];
             var guranteedDamage = (int)(damage * (sourceDN / 100));
-            
             damage += guranteedDamage;
-            
+
             // TODO: Implement Barrier Piercing
             // TODO - Implement Health Steal
 
-            target.ApplyDamage(Mathf.Clamp(damage, 0, 99999),false);
+            target.ApplyDamage(Mathf.Clamp(damage, 0, 99999), false);
         }
+        
+        
+        private float CalculateHitChance(BattleUnit source, BattleUnit target, DamageType damageType) 
+        {
+            var sourceStat = damageType == DamageType.PhysicalDamage 
+                ? source.CurrentBattleStats[GeneralStat.PhysicalAccuracy] 
+                : source.CurrentBattleStats[GeneralStat.MagikAccuracy];
+            
+            var targetStat = damageType == DamageType.PhysicalDamage 
+                ? target.CurrentBattleStats[GeneralStat.PhysicalDodge] 
+                : target.CurrentBattleStats[GeneralStat.MagikDodge];
+
+            return 100 - Mathf.Clamp(targetStat - sourceStat, 0, 100);
+        }
+        
+        private int CalculateDamage(BattleUnit source) 
+        {
+            var offenseStat = _damageType == DamageType.PhysicalDamage 
+                ? source.CurrentBattleStats[GeneralStat.PhysicalOffense] 
+                : source.CurrentBattleStats[GeneralStat.MagikOffense];
+
+            return (int)((float)_damageAmountPercent / 100 * offenseStat);
+        }
+        
+        private float CalculateCritChance(BattleUnit source, BattleUnit target, DamageType damageType)
+        {
+            var sourceStat = damageType == DamageType.PhysicalDamage 
+                ? source.CurrentBattleStats[GeneralStat.PhysicalCriticalChance] 
+                : source.CurrentBattleStats[GeneralStat.MagikCriticalChance];
+
+            var targetStat = damageType == DamageType.PhysicalDamage 
+                ? target.CurrentBattleStats[GeneralStat.PhysicalCriticalAvoidance] 
+                : target.CurrentBattleStats[GeneralStat.MagikCriticalAvoidance];
+
+            return Mathf.Clamp(sourceStat - targetStat, 0, 100);
+        }
+
+        private int CalculateArmorReduction(BattleUnit source, BattleUnit target, int damage)
+        {
+            var sourceStat = _damageType == DamageType.PhysicalDamage 
+                ? source.CurrentBattleStats[GeneralStat.ArmorPierce] 
+                : source.CurrentBattleStats[GeneralStat.MagikArmorPierce];
+
+            var targetStat = _damageType == DamageType.PhysicalDamage 
+                ? target.CurrentBattleStats[GeneralStat.Armor] 
+                : target.CurrentBattleStats[GeneralStat.MagikArmor];
+
+            var remainingArmorPercent = Mathf.Clamp(targetStat - sourceStat, 0, 100) / 100;
+            return (int)(damage * remainingArmorPercent);
+        }
+        
     }
 }

@@ -8,15 +8,15 @@ namespace Game._Scripts.Battle
 {
     public static class TargetSelector
     {
-        public static async Task<Unit> GetManuallySelectedTarget(AbilityAction action, AbilityExecutor abilityExecutor)
+        public static async Task<BattleUnit> SelectManualTarget(AbilityAction action, AbilityExecutor abilityExecutor)
         {
-            await WaitForTargetSelection(action, abilityExecutor);
+            await WaitForValidTargetSelection(action, abilityExecutor);
             var target = BattleSystem.Instance.BattleStateMachine.GetSelectedUnit();
             BattleSystem.Instance.BattleStateMachine.ResetSelectedUnit();
             return target;
         }
 
-        private static async Task WaitForTargetSelection(AbilityAction action, AbilityExecutor abilityExecutor)
+        private static async Task WaitForValidTargetSelection(AbilityAction action, AbilityExecutor abilityExecutor)
         {
             abilityExecutor.SetWaitingForSelectionTrue();
 
@@ -27,33 +27,40 @@ namespace Game._Scripts.Battle
             EventManager.Instance.InvokeOnStepChanged(
                 action.targetType == TargetType.Ally ? "Select Ally Unit" : "Select Enemy Unit");
 
-            NotFound:
-            while (abilityExecutor.WaitingForTargetSelection) await Task.Yield();
-            var isTargetType = targetType.Contains(BattleSystem.Instance.BattleStateMachine.GetSelectedUnit());
-            if (!isTargetType)
+            bool isTargetTypeValid = false;
+            do
             {
-                abilityExecutor.SetWaitingForSelectionTrue();
-                goto NotFound;
-            }
+                await Task.Yield();
+                isTargetTypeValid = targetType.Contains(BattleSystem.Instance.BattleStateMachine.GetSelectedUnit());
 
+                if (!isTargetTypeValid)
+                {
+                    abilityExecutor.SetWaitingForSelectionTrue();
+                }
+            
+            } while (abilityExecutor.WaitingForTargetSelection && !isTargetTypeValid && !abilityExecutor.AbilityCanceled);
+
+            if (abilityExecutor.AbilityCanceled)
+            {
+                BattleSystem.Instance.BattleStateMachine.ResetSelectedUnit();
+            }
             EventManager.Instance.InvokeOnStepChanged("");
-            await Task.CompletedTask;
+            //await Task.CompletedTask;
         }
 
-        public static Unit GetAutomaticallySelectedTarget()
+        public static BattleUnit GetAutomaticallySelectedTarget()
         {
             return BattleSystem.Instance.BattleStateMachine.GetTargetUnit();
         }
 
-        public static List<Unit> GetAllAllyUnits()
+        public static List<BattleUnit> GetAllAllyUnits()
         {
             return BattleSystem.Instance.BattleStateMachine.PlayerUnits;
         }
-        
-        public static List<Unit> GetAllEnemyUnits()
+
+        public static List<BattleUnit> GetAllEnemyUnits()
         {
             return BattleSystem.Instance.BattleStateMachine.EnemyUnits;
         }
     }
-
 }

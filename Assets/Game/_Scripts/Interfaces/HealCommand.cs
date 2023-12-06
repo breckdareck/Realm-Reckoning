@@ -13,7 +13,7 @@ namespace Game._Scripts.Interfaces
             _barrierAmount = barrierAmount;
         }
 
-        public void Execute(Unit source, Unit target)
+        public void Execute(BattleUnit source, BattleUnit target)
         {
             target.ApplyHeal(_healAmount, _barrierAmount);
         }

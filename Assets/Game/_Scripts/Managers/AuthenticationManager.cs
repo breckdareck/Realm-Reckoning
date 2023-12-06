@@ -10,7 +10,7 @@ namespace Game._Scripts.Managers
 
         private void Start()
         {
-            _scene = SceneManager.LoadSceneAsync("EnergyTest");
+            _scene = SceneManager.LoadSceneAsync("MainMenu");
             _scene.allowSceneActivation = false;
         }
 
@@ -22,6 +22,5 @@ namespace Game._Scripts.Managers
                 _scene.allowSceneActivation = true;
             }
         }
-
     }
 }

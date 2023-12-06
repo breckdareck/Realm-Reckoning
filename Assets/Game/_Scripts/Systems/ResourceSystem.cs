@@ -28,7 +28,7 @@ namespace Game._Scripts.Systems
             _UnitDatasDict = UnitDatas.ToDictionary(r => r.unitName, r => r);
         }
 
-        public UnitDataSO GetExampleHero(string t)
+        public UnitDataSO GetUnitData(string t)
         {
             return _UnitDatasDict[t];
         }

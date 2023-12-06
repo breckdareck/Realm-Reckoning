@@ -15,11 +15,12 @@ namespace Game._Scripts.Managers
         public event Action OnStateChangedEvent;
         public event Action<string> OnStepChangedEvent;
         public event Action<AbilitySO> OnAbilitySelectionChangedEvent;
-        public event Action<Unit> OnUnitSelectedChangedEvent;
+        public event Action<BattleUnit> OnUnitSelectedChangedEvent;
 
 
         // Energy Events
         public event Action OnEnergyChangedEvent;
+
 
         private void Awake()
         {
@@ -55,10 +56,10 @@ namespace Game._Scripts.Managers
             OnAbilitySelectionChangedEvent?.Invoke(abilitySo);
         }
 
-        public void InvokeOnUnitSelectedChanged(Unit unit)
+        public void InvokeOnUnitSelectedChanged(BattleUnit battleUnit)
         {
             //Debug.Log("Invoking OnUnitSelectedChanged()");
-            OnUnitSelectedChangedEvent?.Invoke(unit);
+            OnUnitSelectedChangedEvent?.Invoke(battleUnit);
         }
 
         #endregion

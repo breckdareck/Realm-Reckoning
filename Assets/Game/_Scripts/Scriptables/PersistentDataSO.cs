@@ -9,6 +9,6 @@ namespace Game._Scripts.Scriptables
     {
         [SerializeField] public Dictionary<GeneralStat, float> stats;
 
-        public List<GearSlot> GearSlots = new List<GearSlot>(5);
+        public List<GearSlot> GearSlots = new(5);
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using Game._Scripts.Abilities;
 using Game._Scripts.Battle;
 using Game._Scripts.Enums;
@@ -13,14 +14,18 @@ namespace Game._Scripts.UI.Battle
     public class UI_Battle : MonoBehaviour
     {
         [SerializeField] private TMP_Text currentStateText;
+        
         [SerializeField] private Button endBattleButton;
+        
         [SerializeField] private TMP_Text nextStepText;
-
+        
         [SerializeField] private Button[] abilityButtons;
 
         [SerializeField] private TMP_Text debugUnitStatsText;
 
+
         public static UI_Battle Instance { get; private set; }
+
 
         private void Awake()
         {
@@ -35,7 +40,7 @@ namespace Game._Scripts.UI.Battle
             endBattleButton.onClick.AddListener(
                 () => BattleSystem.Instance.BattleStateMachine.SetState(BattleState.End));
         }
-
+        
         private void OnEnable()
         {
             EventManager.Instance.OnStateChangedEvent += UpdateStateText;
@@ -43,7 +48,7 @@ namespace Game._Scripts.UI.Battle
 
             EventManager.Instance.OnStepChangedEvent += UpdateStepText;
         }
-
+        
         private void OnDisable()
         {
             EventManager.Instance.OnStateChangedEvent -= UpdateStateText;
@@ -57,23 +62,27 @@ namespace Game._Scripts.UI.Battle
             currentStateText.text =
                 $"Current State: {BattleSystem.Instance.BattleStateMachine.CurrentState.ToString()}";
         }
-
+        
         private void UpdateStepText(string text)
         {
             nextStepText.text = $"Next Step: {text}";
         }
-
+        
         private void UpdateDebugUnitStatsText()
         {
-            var unit = BattleSystem.Instance.BattleStateMachine.GetActiveUnit();
+
+                var unit = BattleSystem.Instance.BattleStateMachine.GetActiveUnit();
+
+                var sortedStats = unit.Unit.currentUnitStats.OrderBy(x => x.Key.ToString()).ToDictionary(x => x.Key, x => x.Value);
+
             debugUnitStatsText.text =
                 $"{BattleSystem.Instance.BattleStateMachine.GetActiveUnit().name} Persistent Stats + Bonus Battle Stats = Current \n";
-            unit.UnitsDataSo.currentUnitStats
+            sortedStats
                 .ForEach(x =>
                     debugUnitStatsText.text +=
                         $"{x.Key} : {x.Value} + {(unit.BattleBonusStats.TryGetValue(x.Key, out var stat) ? stat : 0)} = {(unit.CurrentBattleStats.TryGetValue(x.Key, out var value) ? value : 0)} \n");
         }
-
+        
         public void SetupAbilityButton(AbilitySO abilitySo, int buttonIndex)
         {
             abilityButtons[buttonIndex].gameObject.SetActive(abilitySo != null);
@@ -83,7 +92,7 @@ namespace Game._Scripts.UI.Battle
             abilityButtons[buttonIndex].GetComponentInChildren<TMP_Text>().text =
                 abilitySo != null ? abilitySo.abilityName : "";
         }
-
+        
         private void OnAbilityButtonClick(AbilitySO abilitySo)
         {
             EventManager.Instance.InvokeOnAbilitySelectionChanged(abilitySo);

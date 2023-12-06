@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Game._Scripts.Battle
 {
-    public static  class CommandFactory
+    public static class CommandFactory
     {
         public static ICommand CreateCommand(AbilityAction action)
         {

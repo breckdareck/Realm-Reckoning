@@ -15,9 +15,9 @@ namespace Game._Scripts.Interfaces
             _statusEffects = statusEffects;
         }
 
-        public void Execute(Unit source, Unit target)
+        public void Execute(BattleUnit source, BattleUnit target)
         {
-            if (target.IsAIUnit)
+            if (target.IsControlledByAI)
             {
                 var sourcePOT = source.CurrentBattleStats[GeneralStat.Potency];
                 var targetRES = target.CurrentBattleStats[GeneralStat.Resilience];
@@ -29,7 +29,6 @@ namespace Game._Scripts.Interfaces
                     Debug.Log($"{source.name}'s StatusEffect was Resisted by {target.name}");
                     return;
                 }
-                    
             }
 
             foreach (var statusEffect in _statusEffects)
@@ -37,7 +36,6 @@ namespace Game._Scripts.Interfaces
                 Debug.Log($"{target.name} was Afflicted with {statusEffect.StatusEffectName} by {source.name}");
                 target.ApplyStatusEffect(statusEffect);
             }
-                
         }
     }
 }

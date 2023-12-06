@@ -10,8 +10,10 @@ namespace Game._Scripts.Abilities
     public class AbilityAction
     {
         public ActionType actionType;
-        [OnValueChanged("SetTargetSelection")]public TargetType targetType;
-        [HideIf("targetType", TargetType.Self)] public TargetSelection targetSelection;
+        [OnValueChanged("SetTargetSelection")] public TargetType targetType;
+
+        [HideIf("targetType", TargetType.Self)]
+        public TargetSelection targetSelection;
 
         [ShowIf("IsAttackAction")] public DamageType damageType;
         [ShowIf("IsAttackAction")] public int damagePercent;
@@ -27,10 +29,7 @@ namespace Game._Scripts.Abilities
 
         private void SetTargetSelection()
         {
-            if(targetType == TargetType.Self)
-            {
-                targetSelection = TargetSelection.Manual;
-            }
+            if (targetType == TargetType.Self) targetSelection = TargetSelection.Manual;
         }
     }
 }
