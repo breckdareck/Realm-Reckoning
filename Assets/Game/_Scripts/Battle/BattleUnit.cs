@@ -71,6 +71,11 @@ namespace Game._Scripts.Battle
         [ReadOnly]
         [FoldoutGroup("Battle Vars")]
         public List<StatusEffectSO> StatusEffects { get; private set; } = new();
+        
+        [ShowInInspector]
+        [ReadOnly]
+        [FoldoutGroup("Battle Vars")]
+        public Dictionary<AbilitySO, int> AbilityCooldowns { get; private set; } = new ();
 
 
         private void Awake()
@@ -115,6 +120,13 @@ namespace Game._Scripts.Battle
             IsTakingTurn = false;
             TurnProgress %= 1000f;
             TickDownStatusEffects();
+            List<AbilitySO> keys = new List<AbilitySO>(AbilityCooldowns.Keys);
+            foreach(AbilitySO ability in keys)
+            { 
+                AbilityCooldowns[ability]--;  
+                if(AbilityCooldowns[ability]==0) 
+                    AbilityCooldowns.Remove(ability);
+            }
         }
 
         public void ApplyDamage(int damageAmount, bool isAttackDodged)
@@ -184,8 +196,6 @@ namespace Game._Scripts.Battle
             }
         }
         
-        
-
         public void ApplyHeal(int healAmount, int barrierAmount)
         {
             CurrentHealth = Mathf.Clamp(CurrentHealth + healAmount, 0, MaxHealth);
@@ -284,6 +294,24 @@ namespace Game._Scripts.Battle
                 CalculateBattleBonusStats();
                 RecalculateCurrentStats();
             }
+        }
+        
+        public bool IsAbilityOnCooldown(AbilitySO stuff)
+        {
+            if(AbilityCooldowns.ContainsKey(stuff))
+            {
+                return AbilityCooldowns[stuff] > 0;
+            }
+            return false;
+        }
+        
+        public void StartCooldown(AbilitySO ability)
+        {
+            int cooldown = ability.cooldownTurns + 1;
+            if(AbilityCooldowns.ContainsKey(ability))
+                AbilityCooldowns[ability] = cooldown;
+            else
+                AbilityCooldowns.Add(ability, cooldown);
         }
     }
 }

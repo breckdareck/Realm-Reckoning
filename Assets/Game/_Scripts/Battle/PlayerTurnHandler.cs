@@ -24,8 +24,7 @@ namespace Game._Scripts.Battle
         public void StartPlayerTurn()
         {
             Debug.Log("Player's turn");
-
-
+            
             EventManager.Instance.InvokeOnStepChanged("Select Ability");
 
             for (var i = 0; i < 4; i++)
@@ -42,9 +41,11 @@ namespace Game._Scripts.Battle
 
         private async void OnAbilitySelected(AbilitySO selectedAbilitySo)
         {
-            // Unsubscribe from the event to avoid multiple calls
-            //EventManager.Instance.OnAbilitySelectionChangedEvent -= OnAbilitySelected;
-            
+            if(_battleStateMachine.GetActiveUnit().IsAbilityOnCooldown(selectedAbilitySo))
+            {
+                Debug.Log("This ability is still cooling down.");
+                return;
+            }
             
             // If same button (ability) pressed again and it is currently in progress (waiting for selection)
             if (_currentAbilitySo == selectedAbilitySo && _abilityExecutor.WaitingForTargetSelection)
@@ -84,6 +85,8 @@ namespace Game._Scripts.Battle
                 _battleStateMachine.GetActiveUnit().UIBattleUnit.SetActiveUnitAnim();
 
                 EventManager.Instance.OnAbilitySelectionChangedEvent -= OnAbilitySelected;
+                
+                _battleStateMachine.GetActiveUnit().StartCooldown(selectedAbilitySo);
 
                 // Notify the end of the player's turn
                 _battleStateMachine.SetState(BattleState.EndTurn);

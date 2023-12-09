@@ -40,3 +40,4 @@ MonoBehaviour:
     barrierAmount: 0
     statusEffect:
     - {fileID: 11400000, guid: 4cea7cc1f58e63248b32591f1dfeb49b, type: 2}
+  cooldownTurns: 3

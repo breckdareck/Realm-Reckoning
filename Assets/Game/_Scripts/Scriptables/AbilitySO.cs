@@ -8,5 +8,6 @@ namespace Game._Scripts.Scriptables
     {
         public string abilityName;
         public AbilityAction[] actions;
+        public int cooldownTurns;
     }
 }

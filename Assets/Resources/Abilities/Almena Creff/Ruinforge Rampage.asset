@@ -22,3 +22,4 @@ MonoBehaviour:
     healAmount: 0
     barrierAmount: 0
     statusEffect: []
+  cooldownTurns: 3
